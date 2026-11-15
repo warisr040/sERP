@@ -1,0 +1,27 @@
+# One command starts PostgreSQL 16 and sERP:   docker compose up -d
+# then open http://127.0.0.1:47394   (first start loads the sample company)
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: serp
+      POSTGRES_USER: serp
+      POSTGRES_PASSWORD: change-me-please
+    volumes:
+      - serp-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U serp -d serp"]
+      interval: 3s
+      retries: 20
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SERP_DSN: "host=db port=5432 dbname=serp user=serp password=change-me-please"
+      SERP_INIT_SAMPLE: "1"
+    ports:
+      - "127.0.0.1:47394:47394"   # reachable from this computer only
+volumes:
+  serp-data:

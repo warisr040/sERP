@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sERP 1.0 — simply handle IT ERP</title>
+<meta name="description" content="sERP (simply handle IT ERP) — accounting, invoices, payroll and user-revisable tax rules on your own PostgreSQL database.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<style>
+:root{
+  --font:"Segoe UI Variable Text","Segoe UI Variable","SF Pro Text","Inter","Segoe UI",system-ui,-apple-system,Roboto,"Noto Sans Thai",Helvetica,Arial,sans-serif;
+  --display:"Segoe UI Variable Display","SF Pro Display","Inter Display","Inter","Segoe UI",system-ui,-apple-system,"Noto Sans Thai",sans-serif;
+  --accent:#4f46e5;--accent-2:#7c3aed;--accent-soft:rgba(79,70,229,.09);--accent-line:rgba(79,70,229,.35);
+  --chrome:rgba(255,255,255,.78);--chrome-solid:#ffffff;--line:rgba(15,23,42,.07);--line-2:rgba(15,23,42,.13);
+  --text:#0f172a;--muted:#667085;--hover:rgba(15,23,42,.045);--field:#ffffff;
+  --canvas:#f3f4f9;--glow:rgba(124,58,237,.10);--hi:rgba(255,255,255,.9);
+  --shadow:0 1px 1px rgba(15,23,42,.04),0 10px 30px -8px rgba(30,27,75,.14);
+  --ok:#059669;--danger:#dc2626;--warn:#d97706;color-scheme:light;
+  --c-rev:#4f46e5;--c-rev2:#7c3aed;--c-exp:#059669;--c-exp2:#10b981;
+}
+[data-theme=dark]{
+  --accent:#818cf8;--accent-2:#a78bfa;--accent-soft:rgba(129,140,248,.15);--accent-line:rgba(129,140,248,.45);
+  --chrome:rgba(24,26,33,.80);--chrome-solid:#181a21;--line:rgba(255,255,255,.065);--line-2:rgba(255,255,255,.13);
+  --text:#e8eaf0;--muted:#98a1b3;--hover:rgba(255,255,255,.055);--field:#11131a;
+  --canvas:#0d0f14;--glow:rgba(129,140,248,.12);--hi:rgba(255,255,255,.06);
+  --shadow:0 1px 1px rgba(0,0,0,.3),0 14px 36px -10px rgba(0,0,0,.6);
+  --ok:#34d399;--danger:#f87171;--warn:#fbbf24;color-scheme:dark;
+  --c-rev:#818cf8;--c-rev2:#a78bfa;--c-exp:#34d399;--c-exp2:#6ee7b7;
+}
+[data-theme=starry]{
+  --accent:#8cc8ff;--accent-2:#4f7fe0;--accent-soft:rgba(140,200,255,.14);--accent-line:rgba(140,200,255,.45);
+  --chrome:rgba(12,24,58,.84);--chrome-solid:#0c1a3d;--line:rgba(160,190,255,.12);--line-2:rgba(160,190,255,.22);
+  --text:#e8ecff;--muted:#9fb0d6;--hover:rgba(160,190,255,.08);--field:#0a1430;
+  --canvas:#0a1530;--glow:rgba(140,200,255,.10);--hi:rgba(200,220,255,.07);
+  --shadow:0 1px 1px rgba(0,0,0,.3),0 14px 36px -10px rgba(0,0,0,.6);
+  --ok:#7dd3fc;--danger:#fca5a5;--warn:#f5d27a;color-scheme:dark;
+  --c-rev:#8cc8ff;--c-rev2:#4f7fe0;--c-exp:#f5d27a;--c-exp2:#ffe7a3;
+  --canvas-tex:radial-gradient(1.3px 1.3px at 20% 30%,rgba(255,255,255,.55) 60%,transparent 100%) 0 0/83px 79px,radial-gradient(1.1px 1.1px at 65% 70%,rgba(200,225,255,.45) 60%,transparent 100%) 0 0/127px 109px,radial-gradient(1px 1px at 40% 55%,rgba(200,215,255,.42) 60%,transparent 100%) 0 0/61px 67px;
+}
+[data-theme=forest]{
+  --accent:#2f6b3a;--accent-2:#5c8f3c;--accent-soft:rgba(47,107,58,.10);--accent-line:rgba(47,107,58,.4);
+  --chrome:rgba(250,248,240,.86);--chrome-solid:#f8f5ec;--line:rgba(47,90,54,.11);--line-2:rgba(47,90,54,.22);
+  --text:#1f3324;--muted:#5f7363;--hover:rgba(47,90,54,.06);--field:#fffdf6;
+  --canvas:#e3ebdc;--glow:rgba(92,143,60,.12);--hi:rgba(255,255,250,.9);
+  --shadow:0 1px 1px rgba(31,51,36,.05),0 10px 30px -8px rgba(31,51,36,.18);
+  --ok:#2f6b3a;--danger:#b4413a;--warn:#c07a2c;color-scheme:light;
+  --c-rev:#2f6b3a;--c-rev2:#5c8f3c;--c-exp:#c07a2c;--c-exp2:#d99a4e;
+  --canvas-tex:radial-gradient(ellipse 50% 40% at 95% 100%,rgba(47,107,58,.14),transparent 70%);
+}
+[data-theme=burning]{
+  --accent:#ff7a33;--accent-2:#ee0979;--accent-soft:rgba(255,122,51,.14);--accent-line:rgba(255,122,51,.45);
+  --chrome:rgba(28,18,14,.86);--chrome-solid:#1c120e;--line:rgba(255,140,80,.12);--line-2:rgba(255,140,80,.22);
+  --text:#f7e9df;--muted:#c4a796;--hover:rgba(255,140,80,.075);--field:#140c09;
+  --canvas:#150e0b;--glow:rgba(255,106,0,.12);--hi:rgba(255,200,160,.06);
+  --shadow:0 1px 1px rgba(0,0,0,.35),0 14px 36px -10px rgba(0,0,0,.65);
+  --ok:#fbbf24;--danger:#fb7185;--warn:#ffd166;color-scheme:dark;
+  --c-rev:#ff7a33;--c-rev2:#ee0979;--c-exp:#ffd166;--c-exp2:#ffe08a;
+  --canvas-tex:radial-gradient(ellipse 70% 45% at 50% 115%,rgba(255,106,0,.22),transparent 60%);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font:13px/1.45 var(--font);color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(1100px 420px at 8% -8%,var(--glow),transparent 62%),radial-gradient(900px 380px at 100% 0%,var(--glow),transparent 60%),var(--canvas-tex,none),var(--canvas)}
+#app{position:relative;height:100vh}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.glass{background:var(--chrome);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--hi),var(--shadow)}
+.solid{background:var(--chrome-solid);border:1px solid var(--line);box-shadow:var(--shadow)}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.r{text-align:right}
+
+/* toolbar */
+header{position:absolute;z-index:8;top:14px;left:14px;right:14px;height:56px;display:flex;align-items:center;gap:6px;padding:0 10px 0 12px;border-radius:18px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+header::-webkit-scrollbar{display:none}
+.brand{display:flex;align-items:center;gap:10px;margin-right:10px;white-space:nowrap}
+.brand b{font:650 15px/1 var(--display);letter-spacing:-.015em}
+.brand small{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+.logo{width:34px;height:34px;display:grid;place-items:center;filter:drop-shadow(0 4px 10px rgba(10,23,54,.35))}
+.logo img{width:34px;height:34px}
+.tb{display:flex;align-items:center;gap:2px;padding-left:10px;margin-left:4px;border-left:1px solid var(--line);height:28px}
+button.b{height:34px;border:1px solid transparent;background:none;border-radius:10px;padding:0 11px;font:inherit;font-weight:550;color:var(--text);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;line-height:1;transition:background .14s,color .14s,border-color .14s,box-shadow .14s}
+button.b:hover{background:var(--hover)}
+button.b.on{background:var(--accent-soft);color:var(--accent)}
+button.b.ico{width:34px;padding:0;justify-content:center}
+button.b.sm{height:30px;padding:0 10px;font-size:12.5px}
+button.b.xs{height:26px;padding:0 8px;font-size:12px;border-radius:8px}
+button.b.line{border-color:var(--line-2)}
+button.b svg{width:17px;height:17px;flex:none;stroke-width:1.8}
+button.b.sm svg{width:15px;height:15px}
+button.b:disabled{opacity:.35;cursor:default;background:none}
+button.b.primary{color:#fff;padding:0 15px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 6px 18px -6px color-mix(in srgb,var(--accent) 70%,transparent)}
+button.b.primary:hover{filter:brightness(1.07)}
+button.b.primary:disabled{opacity:.45;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+button.b.danger{color:var(--danger)}
+button.b.okb{color:var(--ok)}
+.seg{display:inline-flex;padding:3px;gap:2px;border-radius:12px;background:var(--hover);border:1px solid var(--line)}
+.seg button{height:28px;border:0;background:none;border-radius:9px;padding:0 11px;font:inherit;font-weight:550;color:var(--muted);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:background .15s,color .15s,box-shadow .15s}
+.seg button svg{width:15px;height:15px;stroke-width:1.9}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--chrome-solid);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.12),inset 0 1px 0 var(--hi)}
+#tabs button{height:32px;padding:0 13px}
+.spacer{flex:1;min-width:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--line-2);background:none;color:var(--text);font:inherit;font-size:12.5px;font-weight:550;cursor:pointer;white-space:nowrap;max-width:170px;flex:none}
+.pill span{overflow:hidden;text-overflow:ellipsis}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.pill.ok i{background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 22%,transparent)}
+.pill.busy i{background:var(--accent);animation:pulse 1s infinite}
+.pill.err i{background:var(--danger)}
+@keyframes pulse{50%{opacity:.35}}
+.hsel{max-width:210px;height:32px;border:1px solid var(--line-2);border-radius:99px;padding:0 10px;font:inherit;font-size:12.5px;font-weight:550;color:var(--text);background:var(--field);cursor:pointer}
+.hdate{height:32px;border:1px solid var(--line-2);border-radius:99px;padding:0 10px;font:inherit;font-size:12.5px;color:var(--text);background:var(--field);font-variant-numeric:tabular-nums}
+.hlab{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;white-space:nowrap}
+
+/* hero */
+#hero{position:absolute;z-index:6;top:78px;left:14px;right:14px;height:80px;border-radius:18px;display:flex;align-items:center;gap:30px;padding:0 24px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap}
+#hero::-webkit-scrollbar{display:none}
+.pblock{min-width:260px;flex:1 1 auto}
+#coName{font:650 22px/1.2 var(--display);letter-spacing:-.02em}
+.pmeta{display:flex;align-items:center;gap:12px;margin-top:6px;color:var(--muted);font-size:12.5px}
+.kpis{display:flex;gap:28px;flex:none}
+.kpi{display:flex;flex-direction:column;gap:5px}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi b{font:600 19px/1 var(--display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi b small{font:500 12px var(--font);color:var(--muted);margin-left:4px;letter-spacing:0}
+.kpi.neg b{color:var(--danger)}
+.ringbox{display:flex;align-items:center;gap:13px;flex:none;padding-left:26px;border-left:1px solid var(--line)}
+.ring{position:relative;width:56px;height:56px}
+.ring svg{display:block;transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:650 13px var(--display);font-variant-numeric:tabular-nums}
+.ring circle.v{transition:stroke-dasharray .6s cubic-bezier(.2,.8,.2,1)}
+.rtext{display:flex;flex-direction:column;gap:6px}
+.rtext span{font-size:12px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:99px;font-weight:600;font-size:11.5px;white-space:nowrap;vertical-align:middle}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.chip.bad{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
+.chip.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.chip.mid{background:var(--hover);color:var(--muted)}
+.chip.acc{background:var(--accent-soft);color:var(--accent)}
+.chip.plain::before{display:none}
+
+/* views */
+.view{position:absolute;z-index:1;top:166px;left:14px;right:14px;bottom:14px}
+.vbar{height:48px;border-radius:15px;display:flex;align-items:center;gap:6px;padding:0 8px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap}
+.vbar::-webkit-scrollbar{display:none}
+.vbar .lab{color:var(--muted);font-size:12.5px;margin:0 2px 0 8px}
+.vbar select,.vbar input{height:30px;border:1px solid var(--line-2);border-radius:9px;padding:0 9px;font:inherit;font-size:12.5px;color:var(--text);background:var(--field)}
+.vbar input[type=search]{width:220px}
+.vbody{position:absolute;top:56px;left:0;right:0;bottom:0;border-radius:18px;overflow:hidden}
+.vscroll{position:absolute;inset:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.pad{padding:18px 20px}
+#v-dash .vbody{top:0}
+
+/* dashboard */
+.dgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;padding:16px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--chrome-solid);padding:14px 16px;min-width:0}
+.card h3{margin:0 0 10px;font:650 14px var(--display);letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.card h3 .sp{flex:1}
+.card h3 small{font:500 12px var(--font);color:var(--muted)}
+.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+@media (max-width:1250px){.c4,.c5,.c6,.c7,.c8{grid-column:span 12}}
+.mini{display:flex;flex-direction:column}
+.mrow{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:12.5px;cursor:default}
+.mrow:last-child{border-bottom:0}
+.mrow.click{cursor:pointer;border-radius:8px;padding:8px 6px}
+.mrow.click:hover{background:var(--hover)}
+.mrow .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow b{font-weight:600}
+.big{font:650 26px/1.1 var(--display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.taxline{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line-2);font-variant-numeric:tabular-nums}
+.taxline:last-child{border-bottom:0}
+.chartbox svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:14px;height:8px;border-radius:4px;vertical-align:-1px;margin-right:6px}
+
+/* tables */
+table.grid{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+table.grid th{position:sticky;top:0;z-index:1;background:var(--chrome-solid);text-align:left;font-weight:600;color:var(--muted);font-size:11.5px;padding:10px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+table.grid th.r,table.grid td.r{text-align:right}
+table.grid td{padding:4px 10px;border-bottom:1px solid var(--line);height:40px;font-variant-numeric:tabular-nums}
+table.grid tbody tr.click{cursor:pointer}
+table.grid tbody tr:hover td{background:var(--hover)}
+table.grid tr.sel td{background:var(--accent-soft)}
+table.grid tr.sub td{font-weight:650;background:color-mix(in srgb,var(--text) 2.6%,transparent)}
+table.grid tr.tot td{font-weight:700;border-top:1.5px solid var(--line-2);border-bottom:0;background:var(--chrome-solid);position:sticky;bottom:0}
+table.grid input,table.grid select{width:100%;height:30px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text);font:inherit;padding:0 8px;font-variant-numeric:tabular-nums}
+table.grid input:hover,table.grid select:hover{border-color:var(--line-2)}
+table.grid input:focus,table.grid select:focus{background:var(--field);border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);outline:none}
+table.grid input[type=number]{text-align:right;-moz-appearance:textfield;appearance:textfield}
+table.grid input::-webkit-inner-spin-button{-webkit-appearance:none}
+.code{font:600 12px ui-monospace,"Cascadia Code",Consolas,monospace;color:var(--muted)}
+.th2{font-size:11.5px;color:var(--muted)}
+.empty{padding:40px 22px;color:var(--muted);text-align:center;line-height:1.6}
+.empty b{display:block;font:600 16px var(--display);color:var(--text);margin-bottom:4px}
+
+/* split layouts */
+.split{position:absolute;inset:0;display:grid;grid-template-columns:330px 1fr}
+.split>.lcol{border-right:1px solid var(--line-2);overflow:auto;scrollbar-width:thin;padding:10px}
+.split>.rcol{overflow:auto;scrollbar-width:thin;position:relative}
+.sitem{border:1.5px solid var(--line);border-radius:13px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:border-color .14s,box-shadow .14s;background:var(--chrome-solid)}
+.sitem:hover{border-color:var(--accent-line)}
+.sitem.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.sitem .t1{display:flex;align-items:center;gap:8px;font-weight:650}
+.sitem .t1 .sp{flex:1}
+.sitem .t2{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.shead{display:flex;align-items:center;gap:12px;padding:16px 20px 12px;flex-wrap:wrap}
+.shead h2{margin:0;font:650 19px var(--display);letter-spacing:-.02em}
+.shead .sp{flex:1}
+.stats{display:flex;gap:26px;padding:0 20px 14px;flex-wrap:wrap}
+.stats .kpi b{font-size:17px}
+
+/* rules */
+.rulecat{padding:14px 20px 0}
+.rulecat h4{margin:6px 0 10px;font:650 12px var(--font);color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.rule{border:1px solid var(--line);border-radius:14px;background:var(--chrome-solid);margin-bottom:10px;overflow:hidden}
+.rule .rh{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer}
+.rule .rh:hover{background:var(--hover)}
+.rule .rh .nm{font-weight:650}
+.rule .rh .sp{flex:1}
+.vline{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 12px}
+.vchip{border:1.5px solid var(--line-2);border-radius:10px;padding:5px 9px;font-size:11.5px;cursor:pointer;background:none;color:var(--text);font-family:inherit;display:flex;flex-direction:column;gap:1px;text-align:left;min-width:108px}
+.vchip b{font-size:12px}
+.vchip span{color:var(--muted);font-variant-numeric:tabular-nums}
+.vchip.approved{border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.vchip.inforce{box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 18%,transparent);border-color:var(--ok)}
+.vchip.draft,.vchip.submitted{border-style:dashed;border-color:var(--accent)}
+.vchip.rejected,.vchip.retired{opacity:.55}
+.vchip.on{background:var(--accent-soft)}
+.vdetail{border-top:1px solid var(--line);padding:12px 14px;background:color-mix(in srgb,var(--text) 1.5%,transparent)}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:5px 12px;font-size:12.5px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-variant-numeric:tabular-nums;word-break:break-word}
+.ptable{border-collapse:collapse;font-size:12.5px;margin-top:4px}
+.ptable td,.ptable th{padding:4px 12px 4px 0;text-align:left;font-variant-numeric:tabular-nums}
+.ptable th{color:var(--muted);font-weight:600;font-size:11.5px}
+.formula{font:12px ui-monospace,"Cascadia Code",Consolas,monospace;background:var(--field);border:1px solid var(--line);border-radius:9px;padding:8px 10px;white-space:pre-wrap;word-break:break-word}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.drop{display:block;border:2px dashed var(--line-2);border-radius:16px;padding:28px;text-align:center;color:var(--muted);cursor:pointer;transition:border-color .14s,background .14s}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.drop b{display:block;color:var(--text);font:600 15px var(--display);margin-bottom:4px}
+.msgs{font-size:12.5px;line-height:1.55;margin:10px 0}
+.msgs div{padding:5px 10px;border-radius:8px;margin-bottom:4px;font-variant-numeric:tabular-nums;white-space:pre-wrap}
+.msgs .e{background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger)}
+.msgs .w{background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.msgs .c{background:var(--hover);font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-size:12px}
+.msgs .c.add{background:color-mix(in srgb,var(--ok) 12%,transparent)}
+
+/* popovers, menus, modals */
+.pop{position:absolute;z-index:30;padding:16px 18px;border-radius:16px;max-height:calc(100vh - 90px);overflow:auto;animation:pop .16s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(-4px) scale(.985)}}
+#themePop{width:350px;top:76px;right:14px}#helpPop{width:470px;top:76px;right:14px}#setPop{width:420px;top:76px;right:14px}
+.phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
+.phead b{font:650 15px var(--display);letter-spacing:-.01em}
+.xbtn{border:0;background:none;color:var(--muted);cursor:pointer;border-radius:8px;width:28px;height:28px;font-size:17px;line-height:1;flex:none}
+.xbtn:hover{background:var(--hover);color:var(--text)}
+.pnote{font-size:12px;color:var(--muted);margin:8px 0;line-height:1.5;white-space:normal}
+.ph2{font-weight:600;font-size:12px;color:var(--muted);margin:16px 0 8px}
+.thgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.thcard{border:1.5px solid var(--line-2);border-radius:13px;padding:7px;background:none;cursor:pointer;text-align:left;font:inherit;color:var(--text);transition:border-color .14s,box-shadow .14s}
+.thcard:hover{border-color:var(--accent-line)}
+.thcard.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.thcard .prev{height:52px;border-radius:9px;position:relative;overflow:hidden;margin-bottom:7px}
+.thcard .prev i{position:absolute;border-radius:4px}
+.thcard b{font-size:12.5px;font-weight:600}.thcard .pnote{margin:1px 0 0}
+.kbd{font:600 11px ui-monospace,"Cascadia Code",Consolas,monospace;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:6px;padding:1px 6px;background:var(--field);white-space:nowrap}
+#helpPop table{border-collapse:collapse;width:100%;font-size:12.5px}
+#helpPop td{padding:7px 2px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+#helpPop tr:last-child td{border-bottom:0}
+#helpPop td:first-child{white-space:nowrap;padding-right:14px;font-weight:600}
+.mback{position:fixed;inset:0;z-index:35;background:rgba(8,10,20,.38);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:grid;place-items:center;animation:fade .15s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(560px,calc(100vw - 28px));max-height:calc(100vh - 40px);overflow:auto;border-radius:20px;padding:20px 22px;animation:pop .18s cubic-bezier(.2,.8,.2,1)}
+.modal.wide{width:min(980px,calc(100vw - 28px))}
+.modal.mid{width:min(760px,calc(100vw - 28px))}
+.mfoot{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:16px}
+.mfoot .sp{flex:1}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 12px;margin-bottom:12px}
+.fgrid.two{grid-template-columns:1fr 1fr}
+.fgrid label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:550}
+.fgrid label.full{grid-column:1/-1}
+.fgrid>label{min-width:0}
+.fgrid input,.fgrid select,.fgrid textarea{width:100%;min-width:0;height:34px;border:1px solid var(--line-2);border-radius:9px;padding:0 10px;font:inherit;font-size:13px;color:var(--text);background:var(--field);font-weight:400}
+.fgrid textarea{height:70px;padding:8px 10px;resize:vertical}
+.fgrid input:focus,.fgrid select:focus,.fgrid textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.ck{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;color:var(--text)!important}
+.ck input,.fgrid .ck input{accent-color:var(--accent);width:16px;height:16px;margin:0;flex:none}
+.totbox{display:flex;justify-content:flex-end;gap:26px;padding:10px 4px 0;font-variant-numeric:tabular-nums}
+.totbox div{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.totbox span{font-size:11.5px;color:var(--muted)}
+.totbox b{font:650 16px var(--display)}
+.balbar{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:8px 12px;border-radius:10px;margin-top:10px}
+.balbar.ok{background:color-mix(in srgb,var(--ok) 12%,transparent);color:var(--ok)}
+.balbar.bad{background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger)}
+.toasts{position:fixed;z-index:60;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{padding:10px 16px;border-radius:12px;font-weight:550;max-width:min(680px,calc(100vw - 40px));animation:pop .18s;pointer-events:auto;white-space:pre-wrap;line-height:1.5}
+.toast.err{color:var(--danger)}
+.toast.good{color:var(--ok)}
+.tag{display:inline-block;font:600 10.5px var(--font);padding:2px 7px;border-radius:6px;background:var(--hover);color:var(--muted);letter-spacing:.02em}
+.trace{font-size:12px;margin-top:10px}
+.trace td{padding:3px 14px 3px 0}
+.payslip{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--field)}
+.payslip .ln{display:flex;justify-content:space-between;padding:4px 0;font-variant-numeric:tabular-nums}
+.payslip .ln.t{border-top:1px solid var(--line-2);margin-top:6px;padding-top:8px;font-weight:700}
+.tips{border:1px solid var(--line-2);border-radius:12px;padding:10px 14px;background:var(--field);font-size:12.5px;line-height:1.55;margin-top:6px}
+.tips ol{margin:6px 0 8px;padding-left:20px}.tips li{margin-bottom:4px}.tips a{color:var(--accent);font-weight:600}
+#setup{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(1100px 420px at 8% -8%,var(--glow),transparent 62%),var(--canvas-tex,none),var(--canvas)}
+#setup .modal{width:min(660px,calc(100vw - 28px))}
+.hero-logo{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.hero-logo img{width:56px;height:56px;filter:drop-shadow(0 6px 14px rgba(10,23,54,.4))}
+.hero-logo b{font:650 22px var(--display);letter-spacing:-.02em;display:block}
+.bars{display:flex;gap:2px;height:6px;border-radius:3px;overflow:hidden;background:var(--line-2);margin-top:6px}
+.bars i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+@media (max-width:1100px){.lbl{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  html,body{overflow:visible;height:auto;background:#fff!important;color:#000}
+  header,#hero,.vbar,.toasts,.noprint{display:none!important}
+  .view{position:static}.vbody{position:static;box-shadow:none;border:0}.vscroll{position:static;overflow:visible}
+  .view[hidden]{display:none!important}
+  table.grid th{position:static}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="glass">
+  <div class="brand"><span class="logo"><img src="logo.svg" alt=""></span><span><b>sERP</b><small>simply handle IT ERP 1.0</small></span></div>
+  <div class="seg" id="tabs" role="tablist" aria-label="Views">
+    <button data-tab="dash" title="Dashboard (Alt+1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5" rx="2"/><rect x="13.5" y="11" width="7.5" height="10" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/></svg>Dashboard</button>
+    <button data-tab="journal" title="Journal (Alt+2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6M9 11h4"/></svg>Journal</button>
+    <button data-tab="docs" title="Sales & purchases (Alt+3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h5"/></svg>Sales &amp; purchases</button>
+    <button data-tab="payroll" title="Payroll (Alt+4)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6"/><rect x="15" y="11" width="6.5" height="9" rx="1.5"/><path d="M17 14h2.5M17 17h2.5"/></svg>Payroll</button>
+    <button data-tab="tax" title="Tax rules (Alt+5)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M5 7h14"/><path d="M5 7l-3 7a3.5 3.5 0 0 0 6 0zM19 7l-3 7a3.5 3.5 0 0 0 6 0z"/><path d="M8 21h8"/></svg>Tax rules</button>
+    <button data-tab="reports" title="Reports (Alt+6)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 16v-4M12 16V8M16 16v-6"/></svg>Reports</button>
+  </div>
+  <div class="spacer"></div>
+  <label class="hlab" title="All views show figures as of this date">As of <input type="date" class="hdate" id="asOf"></label>
+  <select class="hsel" id="userSel" title="Acting as (maker-checker uses this). Real sign-in comes in a later version."></select>
+  <button class="pill" id="dbPill" title="Database connection"><i></i><span>…</span></button>
+  <div class="tb">
+    <button class="b ico" id="bSet" title="Settings: periods, database"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <button class="b ico" id="bTheme" title="Theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0 0 21 9.7C21 5.9 17 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></svg></button>
+    <button class="b ico" id="bRefresh" title="Reload data (F5 also works)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
+    <button class="b ico" id="bHelp" title="Help and shortcuts (F1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg></button>
+  </div>
+</header>
+
+<section id="hero" class="glass">
+  <div class="pblock">
+    <div id="coName">—</div>
+    <div class="pmeta"><span id="coMeta"></span><span id="perChip"></span><span id="balChip"></span></div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="ringbox" title="Tax rule test cases passing (Tax rules tab)">
+    <div class="ring"><svg width="56" height="56" viewBox="0 0 56 56"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent-2)"/></linearGradient></defs><circle cx="28" cy="28" r="23" fill="none" stroke="var(--line-2)" stroke-width="5"/><circle class="v" id="ringV" cx="28" cy="28" r="23" fill="none" stroke="url(#rg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 999"/></svg><b id="ringT">–</b></div>
+    <div class="rtext"><b>Tax rules</b><span id="ringS">checking…</span></div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="view" id="v-dash">
+  <div class="vbody solid"><div class="vscroll"><div class="dgrid" id="dashGrid"></div></div></div>
+</section>
+
+<!-- JOURNAL -->
+<section class="view" id="v-journal" hidden>
+  <div class="vbar glass">
+    <button class="b sm primary" id="bNewJe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>New entry</button>
+    <span class="lab">Period</span><select id="jPeriod"></select>
+    <span class="lab">Type</span><select id="jType"><option value="">All</option><option>GJ</option><option>SALES</option><option>PURCHASE</option><option>RECEIPT</option><option>PAYMENT</option><option>PAYROLL</option><option>ADJ</option></select>
+    <span class="lab">Status</span><select id="jStatus"><option value="">All</option><option>posted</option><option>draft</option></select>
+    <input type="search" id="jSearch" placeholder="Search number, description, document">
+    <div class="spacer"></div><span class="muted" id="jCount"></span>
+  </div>
+  <div class="vbody solid"><div class="vscroll" id="jBody"></div></div>
+</section>
+
+<!-- SALES & PURCHASES -->
+<section class="view" id="v-docs" hidden>
+  <div class="vbar glass">
+    <div class="seg" id="docSeg"><button data-k="AR" class="on">Sales invoices</button><button data-k="AP">Purchase bills</button><button data-k="PAY">Payments</button></div>
+    <button class="b sm primary" id="bNewDoc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg><span id="bNewDocL">New invoice</span></button>
+    <span class="lab">Show</span><select id="dFilter"><option value="all">All</option><option value="open">Unpaid</option><option value="overdue">Overdue</option></select>
+    <div class="spacer"></div><span class="muted" id="dSum"></span>
+  </div>
+  <div class="vbody solid"><div class="vscroll" id="dBody"></div></div>
+</section>
+
+<!-- PAYROLL -->
+<section class="view" id="v-payroll" hidden>
+  <div class="vbar glass">
+    <div class="seg" id="paySeg"><button data-k="runs" class="on">Payroll runs</button><button data-k="emps">Employees &amp; tax profiles</button></div>
+    <button class="b sm primary" id="bNewRun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>New payroll run</button>
+    <div class="spacer"></div><span class="muted" id="pNote">Social security and salary tax are calculated from the approved tax rules</span>
+  </div>
+  <div class="vbody solid"><div class="split" id="pSplit"><div class="lcol" id="pList"></div><div class="rcol" id="pDetail"></div></div><div class="vscroll" id="pEmps" hidden></div></div>
+</section>
+
+<!-- TAX RULES -->
+<section class="view" id="v-tax" hidden>
+  <div class="vbar glass">
+    <div class="seg" id="taxSeg"><button data-k="rules" class="on">Rules</button><button data-k="work">Approvals<span id="workN"></span></button><button data-k="io">Import / export</button><button data-k="pol">Policies</button><button data-k="log">Change log</button></div>
+    <span class="lab" id="tDateLab">Rules in force on the as-of date</span>
+    <div class="spacer"></div><span id="tTests"></span>
+  </div>
+  <div class="vbody solid"><div class="vscroll" id="tBody"></div></div>
+</section>
+
+<!-- REPORTS -->
+<section class="view" id="v-reports" hidden>
+  <div class="vbar glass">
+    <div class="seg" id="repSeg"><button data-k="tb" class="on">Trial balance</button><button data-k="pl">Profit &amp; loss</button><button data-k="bs">Balance sheet</button><button data-k="tax">Tax summary</button></div>
+    <span class="lab" id="rFromL">From</span><input type="date" id="rFrom">
+    <span class="lab">To</span><input type="date" id="rTo">
+    <div class="spacer"></div>
+    <button class="b sm line" id="bCsv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>CSV</button>
+    <button class="b sm line" id="bPrint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="7" rx="1"/></svg>Print</button>
+  </div>
+  <div class="vbody solid"><div class="vscroll" id="rBody"></div></div>
+</section>
+
+<!-- popovers -->
+<div class="pop glass" id="themePop" hidden></div>
+<div class="pop glass" id="helpPop" hidden></div>
+<div class="pop glass" id="setPop" hidden></div>
+<div class="toasts" id="toasts"></div>
+</div>
+
+<div id="setup" hidden></div>
+
+<script>
+'use strict';
+/* =================== basics =================== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const LS = 'serp.ui';
+const ui = Object.assign({ theme: 'basic', tab: 'dash', user: 'napat', company: 1, asOf: null, docKind: 'AR', payKind: 'runs', taxKind: 'rules', repKind: 'tb' }, (() => { try { return JSON.parse(localStorage.getItem(LS) || '{}'); } catch (e) { return {}; } })());
+const save = () => { try { localStorage.setItem(LS, JSON.stringify(ui)); } catch (e) { } };
+let META = null, STATUS = null;
+const money = (v, d = 2) => (v == null || v === '') ? '–' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const m0 = v => money(v, 0);
+const amt = v => { const n = Number(v || 0); return n ? money(n) : '<span class="muted">–</span>'; };
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fdate = s => { if (!s) return '–'; const [y, m, d] = String(s).slice(0, 10).split('-'); return `${+d} ${MON[+m - 1]} ${y}`; };
+const fts = s => s ? fdate(s) + ' ' + String(s).slice(11, 16) : '–';
+const today = () => new Date().toISOString().slice(0, 10);
+const asOf = () => ui.asOf || today();
+
+async function api(path, opt = {}) {
+  const h = { 'X-ERP-User': ui.user, 'X-ERP-Company': String(ui.company), 'X-Requested-With': 'sERP' };
+  let body = opt.body;
+  if (body && !(body instanceof ArrayBuffer) && !(body instanceof Blob)) { h['Content-Type'] = 'application/json'; body = JSON.stringify(body); }
+  else if (body) h['Content-Type'] = 'application/octet-stream';
+  let r;
+  try { r = await fetch('/api/' + path, { method: opt.method || (body ? 'POST' : 'GET'), headers: h, body }); }
+  catch (e) { setPill('err', 'Server not running'); throw new Error('Cannot reach the sERP server. Is it still running?'); }
+  if (opt.raw) { if (!r.ok) throw new Error((await r.json()).error); return r; }
+  const j = await r.json().catch(() => ({ error: 'Bad response (' + r.status + ')' }));
+  if (!r.ok) { const e = new Error(j.error || ('Error ' + r.status)); e.details = j.details; e.code = j.code; throw e; }
+  return j;
+}
+function toast(msg, kind = '') {
+  const t = document.createElement('div'); t.className = 'toast glass ' + kind; t.textContent = msg;
+  $('#toasts').append(t); setTimeout(() => t.remove(), kind === 'err' ? 7000 : 3500);
+}
+const fail = e => toast(e.message || String(e), 'err');
+async function run(btn, fn) {
+  if (btn) btn.disabled = true;
+  try { return await fn(); } catch (e) { fail(e); } finally { if (btn) btn.disabled = false; }
+}
+function modal(html, cls = '') {
+  const back = document.createElement('div'); back.className = 'mback';
+  back.innerHTML = `<div class="modal glass ${cls}" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.append(back);
+  const onKey = e => { if (e.key === 'Escape' && back === [...document.querySelectorAll('.mback')].at(-1)) { e.stopPropagation(); close(); } };
+  const close = () => { back.remove(); document.removeEventListener('keydown', onKey, true); };
+  back.addEventListener('mousedown', e => { if (e.target === back) close(); });
+  document.addEventListener('keydown', onKey, true);
+  $$('[data-close]', back).forEach(b => b.onclick = close);
+  back.firstElementChild.tabIndex = -1;
+  setTimeout(() => { const f = $('input:not([type=hidden]):not([readonly]),select,textarea', back); (f || back.firstElementChild).focus(); }, 30);
+  return { el: back.firstElementChild, close };
+}
+const confirmBox = (msg) => new Promise(res => {
+  const m = modal(`<div class="phead"><b>Please confirm</b></div><p style="line-height:1.6;margin:0">${esc(msg)}</p><div class="mfoot"><button class="b sm" data-no>Cancel</button><button class="b sm primary" data-yes>Continue</button></div>`);
+  $('[data-no]', m.el).onclick = () => { m.close(); res(false); };
+  $('[data-yes]', m.el).onclick = () => { m.close(); res(true); };
+  setTimeout(() => $('[data-yes]', m.el).focus(), 40);
+});
+const promptBox = (title, label, def = '') => new Promise(res => {
+  const m = modal(`<div class="phead"><b>${esc(title)}</b><button class="xbtn" data-close>×</button></div><div class="fgrid two"><label class="full">${esc(label)}<input id="pv" value="${esc(def)}"></label></div><div class="mfoot"><button class="b sm" data-close>Cancel</button><button class="b sm primary" id="pok">OK</button></div>`);
+  const ok = () => { const v = $('#pv', m.el).value; m.close(); res(v); };
+  $('#pok', m.el).onclick = ok; $('#pv', m.el).onkeydown = e => { if (e.key === 'Enter') ok(); };
+});
+const ICON = {
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 5 5 9-10"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 12 20 4l-6 16-3-7z"/></svg>',
+  calc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11v6M8 15h2M12 15h2"/></svg>',
+  dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',
+  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20V9M7 14l5-5 5 5M5 4h14"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>',
+  undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  cash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9v.01M18 15v.01"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/></svg>',
+};
+const acctName = code => { const a = META?.accounts.find(x => x.account_code === code); return a ? a.name_en : code; };
+const partnerName = id => META?.partners.find(x => x.partner_id === id)?.name || id || '';
+const statusChip = s => ({ posted: 'ok', paid: 'ok', approved: 'ok', open: 'acc', partial: 'warn', draft: 'mid', submitted: 'acc', rejected: 'bad', void: 'bad', retired: 'mid', closed: 'mid', locked: 'mid', pending: 'warn', confirmed: 'ok', applied: 'ok' }[s] || 'mid');
+const chip = (s, label) => `<span class="chip ${statusChip(s)}">${esc(label || s)}</span>`;
+const pct = r => (Number(r) * 100).toLocaleString('en-US', { maximumFractionDigits: 2 }) + '%';
+function setPill(kind, text) { const p = $('#dbPill'); p.className = 'pill ' + kind; $('span', p).textContent = text; }
+
+/* =================== themes =================== */
+const THEMES = {
+  basic: { name: 'Basic', note: 'clean light, indigo', panel: '#ffffff', head: '#ffffff', line2: 'rgba(15,23,42,.16)', a: '#4f46e5', b: '#7c3aed', c: '#059669', d: '#10b981', l: '#dc2626' },
+  dark: { name: 'Dark', note: 'low glare', panel: '#14161d', head: '#181a21', line2: 'rgba(255,255,255,.14)', a: '#818cf8', b: '#a78bfa', c: '#34d399', d: '#6ee7b7', l: '#f87171' },
+  starry: { name: 'Starry Night', note: 'deep blue sky, cold blue', panel: '#0b1736', head: '#0c1a3d', line2: 'rgba(160,190,255,.24)', a: '#8cc8ff', b: '#4f7fe0', c: '#f5d27a', d: '#ffe7a3', l: '#fca5a5' },
+  forest: { name: 'Forest', note: 'greens, parchment', panel: '#fbfaf3', head: '#f8f5ec', line2: 'rgba(47,90,54,.24)', a: '#2f6b3a', b: '#5c8f3c', c: '#c07a2c', d: '#d99a4e', l: '#b4413a' },
+  burning: { name: 'Burning', note: 'charcoal, ember glow', panel: '#1a110e', head: '#1c120e', line2: 'rgba(255,140,80,.24)', a: '#ff7a33', b: '#ee0979', c: '#ffd166', d: '#ffe08a', l: '#fb7185' },
+};
+function applyTheme() { if (!THEMES[ui.theme]) ui.theme = 'basic'; document.documentElement.dataset.theme = ui.theme; }
+function openTheme() {
+  const p = $('#themePop');
+  let g = ''; for (const [k, t] of Object.entries(THEMES)) g += `<button class="thcard${ui.theme === k ? ' on' : ''}" data-th="${k}"><div class="prev" style="background:${t.panel};box-shadow:inset 0 0 0 1px ${t.line2}"><i style="left:0;top:0;right:0;height:11px;background:${t.head};border-radius:0;border-bottom:1px solid ${t.line2}"></i><i style="left:10px;top:20px;width:12px;height:24px;background:linear-gradient(180deg,${t.a},${t.b})"></i><i style="left:26px;top:28px;width:12px;height:16px;background:linear-gradient(180deg,${t.c},${t.d})"></i><i style="left:46px;top:16px;width:12px;height:28px;background:linear-gradient(180deg,${t.a},${t.b})"></i><i style="left:62px;top:24px;width:12px;height:20px;background:linear-gradient(180deg,${t.c},${t.d})"></i><i style="left:86px;top:18px;width:50px;height:6px;background:${t.line2}"></i><i style="left:86px;top:30px;width:36px;height:6px;background:${t.l};opacity:.7"></i></div><b>${t.name}</b><div class="pnote">${t.note}</div></button>`;
+  p.innerHTML = `<div class="phead"><b>Theme</b><button class="xbtn" data-x>×</button></div><div class="thgrid">${g}</div><div class="pnote">Same five themes as sUML and sTrack. The choice is kept on this computer.</div>`;
+  $$('[data-th]', p).forEach(b => b.onclick = () => { ui.theme = b.dataset.th; save(); applyTheme(); openTheme(); if (ui.tab === 'dash') renderDash(); });
+  $('[data-x]', p).onclick = () => p.hidden = true;
+  togglePop(p);
+}
+function togglePop(p) { const was = !p.hidden; $$('.pop').forEach(x => x.hidden = true); p.hidden = was; }
+
+/* =================== help / settings =================== */
+function openHelp() {
+  const p = $('#helpPop');
+  p.innerHTML = `<div class="phead"><b>Help &amp; shortcuts</b><button class="xbtn" data-x>×</button></div>
+  <a class="b sm primary" href="guide/" target="_blank" rel="noopener" style="text-decoration:none;margin-bottom:12px">Open the quick guide (step by step)</a>
+  <table>
+  <tr><td><span class="kbd">Alt</span> + <span class="kbd">1</span>…<span class="kbd">6</span></td><td>Switch view: Dashboard, Journal, Sales &amp; purchases, Payroll, Tax rules, Reports</td></tr>
+  <tr><td><span class="kbd">Alt</span> + <span class="kbd">N</span></td><td>New item in the current view (entry, invoice, payroll run)</td></tr>
+  <tr><td><span class="kbd">F5</span> / <span class="kbd">Ctrl</span>+<span class="kbd">R</span></td><td>Reload data</td></tr>
+  <tr><td><span class="kbd">F1</span></td><td>This help</td></tr>
+  <tr><td><span class="kbd">Esc</span></td><td>Close a dialog or popover</td></tr>
+  </table>
+  <div class="pnote">Shortcuts use key positions, so they work the same on Thai, English, Chinese and Japanese keyboard layouts.</div>
+  <div class="ph2">How tax works here</div>
+  <div class="pnote">VAT on invoices, withholding tax on payments, social security and salary tax on payroll are always calculated from the <b>approved tax rules</b> in force on the document date. Every document records the rule version it used. Rules change only through the Tax rules tab: export → update (for example with Claude) → import as draft → submit → approve by someone else.</div>
+  <div class="ph2">Acting user</div>
+  <div class="pnote">The user list in the toolbar decides who is making changes. Maker-checker rules in the database stop people from approving their own rule changes. There are no passwords yet — sign-in arrives in a later version, so run sERP only on a trusted computer.</div>
+  <div class="ph2">Data</div>
+  <div class="pnote">All data stays in your own PostgreSQL database. The server listens on this computer only (127.0.0.1).</div>`;
+  $('[data-x]', p).onclick = () => p.hidden = true; togglePop(p);
+}
+async function openSettings() {
+  const p = $('#setPop');
+  p.innerHTML = '<div class="pnote">Loading…</div>'; togglePop(p);
+  if (p.hidden) return;
+  const draw = async () => {
+    const [st, meta] = await Promise.all([api('status'), api('meta')]);
+    META = meta;
+    p.innerHTML = `<div class="phead"><b>Settings</b><button class="xbtn" data-x>×</button></div>
+    <div class="ph2" style="margin-top:0">Accounting periods</div>
+    <table class="grid"><thead><tr><th>Period</th><th>From</th><th>To</th><th>Status</th><th></th></tr></thead><tbody>
+    ${meta.periods.map(x => `<tr><td><b>${x.period_id}</b></td><td>${fdate(x.start_date)}</td><td>${fdate(x.end_date)}</td><td>${chip(x.status)}</td><td class="r">${x.status === 'open' ? `<button class="b xs line" data-pc="${x.period_id}">Close</button>` : x.status === 'closed' ? `<button class="b xs line" data-po="${x.period_id}">Reopen</button>` : ''}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="actions"><button class="b sm line" id="pAdd">${ICON.plus}Add next month</button></div>
+    <div class="pnote">Closing a period stops posting into it. Tax rule changes dated inside a closed period follow the back-dating policy (Tax rules → Policies).</div>
+    <div class="ph2">Database</div>
+    <div class="kv"><dt>Connection</dt><dd>${esc(st.dsn || '–')}</dd><dt>Server</dt><dd>${esc(st.db_version || st.db)}</dd><dt>sERP version</dt><dd>${esc(st.version)}</dd></div>
+    <div class="actions"><button class="b sm line" id="pDb">Change database…</button></div>
+    <div class="ph2">Company</div>
+    <div class="kv"><dt>Name</dt><dd>${esc(meta.company.name_en)}<br><span class="muted">${esc(meta.company.name_th || '')}</span></dd><dt>Tax ID</dt><dd>${esc(meta.company.tax_id)}</dd><dt>Country rules</dt><dd>${esc(meta.company.jurisdiction_code)} · ${esc(meta.company.base_currency)}</dd></div>`;
+    $('[data-x]', p).onclick = () => p.hidden = true;
+    $$('[data-pc]', p).forEach(b => b.onclick = () => run(b, async () => { if (!await confirmBox(`Close period ${b.dataset.pc}? Nobody can post into it until it is reopened.`)) return; toast((await api('periods', { body: { action: 'close', period_id: b.dataset.pc } })).message, 'good'); await draw(); refresh(); }));
+    $$('[data-po]', p).forEach(b => b.onclick = () => run(b, async () => { toast((await api('periods', { body: { action: 'open', period_id: b.dataset.po } })).message, 'good'); await draw(); refresh(); }));
+    $('#pAdd', p).onclick = e => run(e.target, async () => { toast((await api('periods', { body: { action: 'create' } })).message, 'good'); await draw(); });
+    $('#pDb', p).onclick = () => { p.hidden = true; showSetup(st, true); };
+  };
+  try { await draw(); } catch (e) { fail(e); p.hidden = true; }
+}
+
+/* =================== first-run setup =================== */
+function sayHtml(t, tips, k = 'c') {
+  return `<div class="${k}">${esc(t)}</div>` + (tips?.length ? `<div class="tips"><b>How to fix it — check in this order:</b><ol>${tips.map(x => `<li>${esc(x)}</li>`).join('')}</ol><a href="guide/#pg" target="_blank" rel="noopener">Open the step-by-step guide →</a></div>` : '');
+}
+function showSetup(st, canCancel = false) {
+  const s = $('#setup'); s.hidden = false;
+  s.innerHTML = `<div class="modal glass"><div class="hero-logo"><img src="logo.svg" alt=""><div><b>Welcome to sERP</b><span class="muted">simply handle IT ERP ${esc(st?.version || '')}</span></div></div>
+  <p class="pnote" style="font-size:13px">sERP keeps your books in a PostgreSQL database on your own computer or server. Enter the connection below. If the database is empty, sERP can create it with a sample company, the Thai tax rules and two months of data.</p>
+  <div class="msgs" id="sMsg">${st?.error ? sayHtml(st.error, st.tips, 'e') : ''}</div>
+  <div class="fgrid">
+    <label>Host<input id="sHost" value="localhost"></label><label>Port<input id="sPort" value="5432"></label><label>Database<input id="sDb" value="serp"></label>
+    <label>User<input id="sUser" value="postgres"></label><label>Password<input id="sPw" type="password" autocomplete="current-password"></label>
+    <label class="ck" style="align-self:end;padding-bottom:8px"><input type="checkbox" id="sRep"> replace existing sERP data</label>
+  </div>
+  <div class="mfoot">${canCancel ? '<button class="b sm" id="sCancel">Cancel</button>' : ''}<span class="sp"></span><button class="b sm line" id="sTest">Test connection</button><button class="b sm line" id="sSave">Use this database</button><button class="b sm primary" id="sCreate">Create sample database</button></div>
+  <div class="pnote">No PostgreSQL yet? Install PostgreSQL 16 from postgresql.org, or run <span class="kbd">docker compose up</span> in the sERP folder, which starts the database and sERP together.</div></div>`;
+  const body = a => ({ action: a, host: $('#sHost').value.trim(), port: $('#sPort').value.trim(), dbname: $('#sDb').value.trim(), user: $('#sUser').value.trim(), password: $('#sPw').value, replace: $('#sRep').checked });
+  const say = (t, k = 'c', tips) => $('#sMsg').innerHTML = sayHtml(t, tips, k);
+  const go = async (btn, a) => run(btn, async () => {
+    say(a === 'create_sample' ? 'Creating database and loading the sample… this takes a few seconds' : 'Connecting…');
+    try { const r = await api('setup', { body: body(a) }); say(r.message, 'c add'); if (a !== 'test') { s.hidden = true; await boot(); toast('Connected', 'good'); } }
+    catch (e) { say(e.message, 'e', e.details?.tips); }
+  });
+  $('#sTest').onclick = e => go(e.target, 'test');
+  $('#sSave').onclick = e => go(e.target, 'save');
+  $('#sCreate').onclick = e => go(e.target, 'create_sample');
+  if (canCancel) $('#sCancel').onclick = () => s.hidden = true;
+}
+
+/* =================== hero =================== */
+let DASH = null, TAXCACHE = null;
+function renderHero() {
+  if (!META) return;
+  const c = META.company;
+  $('#coName').textContent = c.name_en;
+  $('#coMeta').innerHTML = `<span class="tag">${esc(c.company_code)}</span> Tax ID ${esc(c.tax_id)} · ${esc(c.base_currency)}`;
+  if (DASH) {
+    const k = DASH.kpi;
+    $('#perChip').innerHTML = chip(META.periods.find(p => p.period_id === DASH.period)?.status || 'open', 'Period ' + DASH.period);
+    $('#balChip').innerHTML = DASH.balanced ? '<span class="chip ok">Books balance</span>' : '<span class="chip bad">Books do not balance</span>';
+    const K = (l, v, cls = '') => `<div class="kpi ${cls}"><span>${l}</span><b>${m0(v)}<small>THB</small></b></div>`;
+    $('#kpis').innerHTML = K('Cash in bank', k.cash) + K('Receivables', k.ar) + K('Payables', k.ap) + K(`Profit · ${DASH.period}`, k.profit, k.profit < 0 ? 'neg' : '');
+  }
+}
+function renderRing() {
+  if (!TAXCACHE) return;
+  const t = TAXCACHE.tests, n = t.length, ok = t.filter(x => x.ok).length, p = n ? ok / n : 0;
+  $('#ringV').setAttribute('stroke-dasharray', `${(p * 2 * Math.PI * 23).toFixed(1)} 999`);
+  $('#ringT').textContent = n ? Math.round(p * 100) + '%' : '–';
+  const pend = TAXCACHE.rules.flatMap(r => r.versions).filter(v => v.status === 'draft' || v.status === 'submitted').length;
+  $('#ringS').innerHTML = `${ok}/${n} tests pass` + (pend ? ` · <span style="color:var(--accent)">${pend} pending</span>` : '');
+  $('#workN').textContent = pend ? ` · ${pend}` : '';
+  $('#tTests').innerHTML = TAXCACHE.validation.errors.length ? `<span class="chip bad">${TAXCACHE.validation.errors.length} problem(s)</span>` : `<span class="chip ok">${ok}/${n} test cases pass</span>`;
+}
+
+/* =================== dashboard =================== */
+async function loadDash() { DASH = await api('dashboard?as_of=' + asOf()); renderHero(); renderDash(); }
+function barChart(series) {
+  const W = 640, H = 210, pl = 54, pb = 26, pt = 10;
+  const max = Math.max(1, ...series.flatMap(s => [Number(s.revenue), Number(s.expense)]));
+  const nice = Math.pow(10, Math.floor(Math.log10(max))); const top = Math.ceil(max / nice) * nice;
+  const gw = (W - pl - 10) / Math.max(series.length, 1), bw = Math.min(34, gw / 3.2);
+  let g = '';
+  for (let i = 0; i <= 4; i++) { const y = pt + (H - pt - pb) * (1 - i / 4); g += `<line x1="${pl}" x2="${W - 6}" y1="${y}" y2="${y}" stroke="var(--line-2)" stroke-dasharray="${i ? '3 4' : ''}"/><text x="${pl - 8}" y="${y + 4}" text-anchor="end" font-size="10.5" fill="var(--muted)">${m0(top * i / 4)}</text>`; }
+  series.forEach((s, i) => {
+    const x0 = pl + gw * i + gw / 2; const h1 = (H - pt - pb) * Number(s.revenue) / top, h2 = (H - pt - pb) * Number(s.expense) / top;
+    g += `<rect x="${x0 - bw - 2}" y="${H - pb - h1}" width="${bw}" height="${Math.max(h1, 0)}" rx="5" fill="url(#gRev)"><title>Revenue ${money(s.revenue)}</title></rect>`;
+    g += `<rect x="${x0 + 2}" y="${H - pb - h2}" width="${bw}" height="${Math.max(h2, 0)}" rx="5" fill="url(#gExp)"><title>Expenses ${money(s.expense)}</title></rect>`;
+    g += `<text x="${x0}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--muted)">${s.period}${s.status !== 'open' ? ' ·' + s.status[0] : ''}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Revenue and expenses by month"><defs><linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--c-rev)"/><stop offset="1" stop-color="var(--c-rev2)"/></linearGradient><linearGradient id="gExp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--c-exp)"/><stop offset="1" stop-color="var(--c-exp2)"/></linearGradient></defs>${g}</svg>`;
+}
+function renderDash() {
+  const d = DASH; if (!d) return;
+  const k = d.kpi;
+  const pend = [...d.pending_rules.map(r => `<div class="mrow click" data-go="tax:work"><span class="chip ${statusChip(r.status)}">${r.status}</span><span class="grow"><b>${esc(r.rule_code)}</b> v${r.version_no} · from ${fdate(r.effective_from)}</span><span class="muted">${r.approvals}/${r.required} approvals</span></div>`),
+    ...d.pending_payroll.map(r => `<div class="mrow click" data-go="payroll:${esc(r.run_id)}"><span class="chip mid">draft</span><span class="grow"><b>${esc(r.run_id)}</b> payroll · pay date ${fdate(r.pay_date)}</span><span class="muted">post when ready</span></div>`),
+    ...(d.draft_je ? [`<div class="mrow click" data-go="journal:draft"><span class="chip mid">draft</span><span class="grow"><b>${d.draft_je}</b> journal ${d.draft_je > 1 ? 'entries' : 'entry'} not posted</span></div>`] : [])];
+  const taxTotal = Object.values(d.tax_due).reduce((a, b) => a + Number(b), 0);
+  $('#dashGrid').innerHTML = `
+  <div class="card c4"><h3>Profit · ${esc(d.period)}<span class="sp"></span><small>${fdate(d.period_start)} – ${fdate(d.period_end)}</small></h3>
+    <div class="big" style="color:${k.profit < 0 ? 'var(--danger)' : 'inherit'}">${money(k.profit)}</div>
+    <div class="taxline" style="margin-top:10px"><span>Revenue</span><b>${money(k.revenue)}</b></div><div class="taxline"><span>Expenses</span><b>${money(k.expense)}</b></div></div>
+  <div class="card c4"><h3>Receivables<span class="sp"></span><small>${d.open_ar.length} open</small></h3>
+    <div class="big">${money(k.ar)}</div>
+    <div class="taxline" style="margin-top:10px"><span>Overdue</span><b style="color:${k.ar_overdue > 0 ? 'var(--danger)' : 'inherit'}">${money(k.ar_overdue)}</b></div><div class="taxline"><span>Payables</span><b>${money(k.ap)}</b></div></div>
+  <div class="card c4"><h3>Tax to pay<span class="sp"></span><small>balances on ${fdate(d.as_of)}</small></h3>
+    <div class="big">${money(taxTotal)}</div>
+    ${Object.entries(d.tax_due).map(([n, v]) => `<div class="taxline"><span>${esc(n)}</span><b>${money(v)}</b></div>`).join('')}</div>
+  <div class="card c7"><h3>Revenue and expenses by month</h3><div class="chartbox">${barChart(d.series)}</div><div class="legend"><span><i style="background:linear-gradient(90deg,var(--c-rev),var(--c-rev2))"></i>Revenue</span><span><i style="background:linear-gradient(90deg,var(--c-exp),var(--c-exp2))"></i>Expenses</span><span>c = closed period</span></div></div>
+  <div class="card c5"><h3>Waiting for action<span class="sp"></span><small>you are ${esc(META.users.find(u => u.username === ui.user)?.full_name || ui.user)}</small></h3><div class="mini">${pend.join('') || '<div class="empty" style="padding:24px"><b>All clear</b>Nothing is waiting.</div>'}</div></div>
+  <div class="card c6"><h3>Open sales invoices<span class="sp"></span><button class="b xs line" data-go="docs:AR">All</button></h3><div class="mini">${d.open_ar.map(r => `<div class="mrow click" data-inv="${esc(r.doc_no)}"><span class="code">${esc(r.doc_no)}</span><span class="grow">${esc(r.partner)}</span>${r.days_overdue ? `<span class="chip bad">${r.days_overdue} d overdue</span>` : `<span class="muted">due ${fdate(r.due_date)}</span>`}<b class="num">${money(r.outstanding)}</b></div>`).join('') || '<div class="pnote">No open invoices.</div>'}</div></div>
+  <div class="card c6"><h3>Latest journal entries<span class="sp"></span><button class="b xs line" data-go="journal:">All</button></h3><div class="mini">${d.recent.map(r => `<div class="mrow click" data-je="${esc(r.je_no)}"><span class="code">${esc(r.je_no)}</span><span class="grow">${esc(r.description)}</span>${r.status !== 'posted' ? chip(r.status) : ''}<span class="muted">${fdate(r.entry_date)}</span><b class="num">${money(r.amount)}</b></div>`).join('')}</div></div>`;
+  wireGo($('#dashGrid'));
+}
+function wireGo(root) {
+  $$('[data-go]', root).forEach(el => el.onclick = () => {
+    const [tab, arg] = el.dataset.go.split(':');
+    if (tab === 'tax') { ui.taxKind = arg || 'rules'; }
+    if (tab === 'docs') { ui.docKind = arg || 'AR'; }
+    if (tab === 'journal') { $('#jStatus').value = arg === 'draft' ? 'draft' : ''; }
+    if (tab === 'payroll') { ui.payKind = 'runs'; PAYSEL = arg || PAYSEL; }
+    setTab(tab);
+  });
+  $$('[data-je]', root).forEach(el => el.onclick = () => openJe(el.dataset.je));
+  $$('[data-inv]', root).forEach(el => el.onclick = () => openInvoice(el.dataset.inv));
+}
+
+/* =================== journal =================== */
+async function loadJournal() {
+  const per = $('#jPeriod');
+  if (!per.options.length) { per.innerHTML = '<option value="">All</option>' + META.periods.map(p => `<option>${p.period_id}</option>`).join(''); }
+  const qs = new URLSearchParams({ period: per.value, type: $('#jType').value, status: $('#jStatus').value, q: $('#jSearch').value });
+  const r = await api('journal?' + qs);
+  $('#jCount').textContent = `${r.entries.length} entries`;
+  $('#jBody').innerHTML = r.entries.length ? `<table class="grid"><thead><tr><th>Number</th><th>Date</th><th>Type</th><th>Description</th><th>Document</th><th>Status</th><th>By</th><th class="r">Debit</th><th class="r">Credit</th></tr></thead><tbody>
+  ${r.entries.map(e => `<tr class="click" data-je="${esc(e.je_no)}"><td class="code">${esc(e.je_no)}</td><td>${fdate(e.entry_date)}</td><td><span class="tag">${esc(e.journal_type)}</span></td><td>${esc(e.description)}</td><td class="muted">${esc(e.source_doc || '')}</td><td>${chip(e.status)}</td><td class="muted">${esc(e.created_by)}</td><td class="r">${money(e.debit)}</td><td class="r">${money(e.credit)}</td></tr>`).join('')}
+  </tbody></table>` : '<div class="empty"><b>No entries</b>Nothing matches the filters.</div>';
+  wireGo($('#jBody'));
+}
+async function openJe(no) {
+  try {
+    const h = await api('journal/' + encodeURIComponent(no));
+    const dr = h.lines.reduce((a, l) => a + Number(l.debit), 0), cr = h.lines.reduce((a, l) => a + Number(l.credit), 0);
+    const m = modal(`<div class="phead"><b>${esc(h.je_no)} ${chip(h.status)} <span class="tag">${esc(h.journal_type)}</span></b><button class="xbtn" data-close>×</button></div>
+    <div class="kv"><dt>Date</dt><dd>${fdate(h.entry_date)} · period ${esc(h.period_id)}</dd><dt>Description</dt><dd>${esc(h.description)}</dd><dt>Source document</dt><dd>${esc(h.source_doc || '–')}</dd><dt>Created</dt><dd>${esc(h.created_by)} · ${fts(h.created_at)}</dd>${h.reversed_by ? `<dt>Reversed by</dt><dd><a href="#" data-je="${esc(h.reversed_by)}">${esc(h.reversed_by)}</a></dd>` : ''}</div>
+    <table class="grid" style="margin-top:14px"><thead><tr><th>#</th><th>Account</th><th>Partner / memo</th><th>Tax rule</th><th class="r">Debit</th><th class="r">Credit</th></tr></thead><tbody>
+    ${h.lines.map(l => `<tr><td class="muted">${l.line_no}</td><td><span class="code">${esc(l.account_code)}</span> ${esc(l.account_name)}</td><td>${esc(l.partner || '')}${l.partner && l.memo ? ' · ' : ''}<span class="muted">${esc(l.memo || '')}</span></td><td>${l.tax_rule ? `<span class="chip acc plain">${esc(l.tax_rule)} v${l.tax_version}</span>` : ''}</td><td class="r">${amt(l.debit)}</td><td class="r">${amt(l.credit)}</td></tr>`).join('')}
+    <tr class="tot"><td></td><td>Total</td><td></td><td></td><td class="r">${money(dr)}</td><td class="r">${money(cr)}</td></tr></tbody></table>
+    <div class="mfoot">${h.status === 'draft' ? `<button class="b sm danger" id="jDel">${ICON.trash}Delete draft</button><span class="sp"></span><button class="b sm primary" id="jPost">${ICON.check}Post</button>` : `<span class="sp"></span>${h.status === 'posted' && !h.reversed_by && !h.description.startsWith('Reversal of') ? `<button class="b sm line" id="jRev">${ICON.undo}Reverse…</button>` : ''}<button class="b sm" data-close>Close</button>`}</div>`, 'wide');
+    $$('[data-je]', m.el).forEach(a => a.onclick = e => { e.preventDefault(); m.close(); openJe(a.dataset.je); });
+    const act = async (btn, a, body) => run(btn, async () => { const r = await api(`journal/${encodeURIComponent(no)}/${a}`, { body: body || {} }); toast(r.message, 'good'); m.close(); refresh(); });
+    $('#jPost', m.el) && ($('#jPost', m.el).onclick = e => act(e.currentTarget, 'post'));
+    $('#jDel', m.el) && ($('#jDel', m.el).onclick = async e => { if (await confirmBox('Delete this draft entry?')) act(e.currentTarget, 'delete'); });
+    $('#jRev', m.el) && ($('#jRev', m.el).onclick = async e => { const d = await promptBox('Reverse entry', 'Date of the reversing entry (must be in an open period)', asOf()); if (d) act(e.currentTarget, 'reverse', { date: d }); });
+  } catch (e) { fail(e); }
+}
+function acctOptions(sel, filter) {
+  return '<option value="">Choose account…</option>' + META.accounts.filter(a => a.is_postable && (!filter || filter(a))).map(a => `<option value="${a.account_code}"${a.account_code === sel ? ' selected' : ''}>${a.account_code} · ${esc(a.name_en)}</option>`).join('');
+}
+function newJe() {
+  const lines = [{}, {}, {}];
+  const m = modal(`<div class="phead"><b>New journal entry</b><button class="xbtn" data-close>×</button></div>
+  <div class="fgrid"><label>Date<input type="date" id="nDate" value="${asOf()}"></label><label>Type<select id="nType"><option>GJ</option><option>ADJ</option><option>PAYMENT</option><option>RECEIPT</option></select></label><label>Document reference<input id="nSrc" placeholder="optional"></label><label class="full">Description<input id="nDesc" placeholder="What is this entry for?"></label></div>
+  <table class="grid"><thead><tr><th style="width:34%">Account</th><th style="width:22%">Partner</th><th>Memo</th><th class="r" style="width:13%">Debit</th><th class="r" style="width:13%">Credit</th><th></th></tr></thead><tbody id="nLines"></tbody></table>
+  <div class="actions"><button class="b sm line" id="nAdd">${ICON.plus}Add line</button></div>
+  <div id="nBal"></div>
+  <div class="mfoot"><button class="b sm" data-close>Cancel</button><span class="sp"></span><button class="b sm line" id="nDraft">Save as draft</button><button class="b sm primary" id="nPost">${ICON.check}Post entry</button></div>`, 'wide');
+  const tb = $('#nLines', m.el);
+  const draw = () => {
+    tb.innerHTML = lines.map((l, i) => `<tr data-i="${i}"><td><select data-f="account_code">${acctOptions(l.account_code)}</select></td><td><select data-f="partner_id"><option value=""></option>${META.partners.map(p => `<option value="${p.partner_id}"${p.partner_id === l.partner_id ? ' selected' : ''}>${esc(p.name)}</option>`).join('')}</select></td><td><input data-f="memo" value="${esc(l.memo || '')}"></td><td><input type="number" step="0.01" min="0" data-f="debit" value="${l.debit || ''}"></td><td><input type="number" step="0.01" min="0" data-f="credit" value="${l.credit || ''}"></td><td><button class="xbtn" data-rm="${i}" title="Remove line">×</button></td></tr>`).join('');
+    $$('[data-f]', tb).forEach(inp => inp.oninput = inp.onchange = () => { const l = lines[+inp.closest('tr').dataset.i]; l[inp.dataset.f] = inp.value; if (inp.dataset.f === 'debit' && inp.value) { l.credit = ''; inp.closest('tr').querySelector('[data-f=credit]').value = ''; } if (inp.dataset.f === 'credit' && inp.value) { l.debit = ''; inp.closest('tr').querySelector('[data-f=debit]').value = ''; } bal(); });
+    $$('[data-rm]', tb).forEach(b => b.onclick = () => { lines.splice(+b.dataset.rm, 1); draw(); });
+    bal();
+  };
+  const bal = () => {
+    const d = lines.reduce((a, l) => a + Number(l.debit || 0), 0), c = lines.reduce((a, l) => a + Number(l.credit || 0), 0);
+    const ok = Math.abs(d - c) < 0.005 && d > 0;
+    $('#nBal', m.el).innerHTML = `<div class="totbox"><div><span>Debit</span><b>${money(d)}</b></div><div><span>Credit</span><b>${money(c)}</b></div><div><span>Difference</span><b style="color:${ok ? 'var(--ok)' : 'var(--danger)'}">${money(d - c)}</b></div></div><div class="balbar ${ok ? 'ok' : 'bad'}">${ok ? ICON.check.replace('<svg', '<svg width="15" height="15"') + ' Balanced — ready to post' : 'Debits and credits must be equal before posting'}</div>`;
+    $('#nPost', m.el).disabled = !ok;
+  };
+  $('#nAdd', m.el).onclick = () => { lines.push({}); draw(); };
+  const send = (btn, post) => run(btn, async () => { const r = await api('journal', { body: { entry_date: $('#nDate', m.el).value, journal_type: $('#nType', m.el).value, source_doc: $('#nSrc', m.el).value || null, description: $('#nDesc', m.el).value, lines, post } }); toast(`${r.je_no} ${r.status === 'posted' ? 'posted' : 'saved as draft'}`, 'good'); m.close(); refresh(); });
+  $('#nDraft', m.el).onclick = e => send(e.currentTarget, false);
+  $('#nPost', m.el).onclick = e => send(e.currentTarget, true);
+  draw();
+}
+
+/* =================== invoices & payments =================== */
+let DOCS = null;
+async function loadDocs() {
+  DOCS = await api('invoices?as_of=' + asOf());
+  $$('#docSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === ui.docKind));
+  $('#bNewDocL').textContent = ui.docKind === 'AP' ? 'New bill' : ui.docKind === 'PAY' ? 'Record payment' : 'New invoice';
+  $('#dFilter').disabled = ui.docKind === 'PAY';
+  if (ui.docKind === 'PAY') {
+    const p = DOCS.payments;
+    $('#dSum').textContent = `${p.length} payments`;
+    $('#dBody').innerHTML = `<table class="grid"><thead><tr><th>Number</th><th>Date</th><th>Direction</th><th>Partner</th><th>Settles</th><th>Method</th><th class="r">Withholding tax</th><th class="r">Cash</th><th>Journal</th></tr></thead><tbody>${p.map(x => `<tr><td class="code">${esc(x.payment_no)}</td><td>${fdate(x.payment_date)}</td><td>${x.direction === 'in' ? '<span class="chip ok">received</span>' : '<span class="chip acc">paid</span>'}</td><td>${esc(x.partner || '')}</td><td class="muted">${esc(x.docs || '')}</td><td>${esc(x.method)}</td><td class="r">${amt(x.wht_amount)}</td><td class="r"><b>${money(x.amount)}</b></td><td><a href="#" data-je="${esc(x.je_no || '')}" class="code">${esc(x.je_no || '')}</a></td></tr>`).join('')}</tbody></table>`;
+    $$('[data-je]', $('#dBody')).forEach(a => a.onclick = e => { e.preventDefault(); openJe(a.dataset.je); });
+    return;
+  }
+  let docs = DOCS.invoices.filter(d => d.doc_type === ui.docKind);
+  const f = $('#dFilter').value;
+  if (f === 'open') docs = docs.filter(d => Number(d.outstanding) > 0);
+  if (f === 'overdue') docs = docs.filter(d => d.days_overdue > 0);
+  const out = docs.reduce((a, d) => a + Number(d.outstanding), 0);
+  $('#dSum').textContent = `${docs.length} documents · outstanding ${money(out)}`;
+  $('#dBody').innerHTML = docs.length ? `<table class="grid"><thead><tr><th>Number</th><th>Date</th><th>${ui.docKind === 'AR' ? 'Customer' : 'Vendor'}</th><th>Due</th><th>Status</th><th class="r">Before VAT</th><th class="r">VAT</th><th class="r">Total</th><th class="r">Outstanding</th></tr></thead><tbody>
+  ${docs.map(d => `<tr class="click" data-inv="${esc(d.doc_no)}"><td class="code">${esc(d.doc_no)}</td><td>${fdate(d.doc_date)}</td><td>${esc(d.partner)}</td><td>${fdate(d.due_date)} ${d.days_overdue ? `<span class="chip bad">${d.days_overdue} d</span>` : ''}</td><td>${chip(d.status)}</td><td class="r">${money(d.subtotal)}</td><td class="r">${amt(d.vat_amount)}</td><td class="r">${money(d.total)}</td><td class="r"><b>${amt(d.outstanding)}</b></td></tr>`).join('')}
+  <tr class="tot"><td colspan="8">Total outstanding</td><td class="r">${money(out)}</td></tr></tbody></table>` : `<div class="empty"><b>Nothing here</b>No ${ui.docKind === 'AR' ? 'invoices' : 'bills'} match.</div>`;
+  wireGo($('#dBody'));
+}
+async function openInvoice(no) {
+  try {
+    const h = await api('invoices/' + encodeURIComponent(no));
+    const isAR = h.doc_type === 'AR';
+    const m = modal(`<div class="phead"><b>${isAR ? 'Sales invoice' : 'Purchase bill'} ${esc(h.doc_no)} ${chip(h.status)}</b><button class="xbtn" data-close>×</button></div>
+    <div class="kv"><dt>${isAR ? 'Customer' : 'Vendor'}</dt><dd>${esc(h.partner)} <span class="muted">· Tax ID ${esc(h.partner_tax_id || '–')}</span></dd><dt>Date / due</dt><dd>${fdate(h.doc_date)} · due ${fdate(h.due_date)}</dd><dt>VAT rule</dt><dd>${h.vat_rule ? `<span class="chip acc plain">${esc(h.vat_rule)} v${h.vat_version}</span> ${Number(h.vat_rate)}% <span class="muted">· ${esc(h.vat_legal || '')}</span>` : '<span class="muted">No VAT</span>'}</dd><dt>Journal</dt><dd><a href="#" data-je="${esc(h.je_no || '')}" class="code">${esc(h.je_no || '–')}</a></dd></div>
+    <table class="grid" style="margin-top:14px"><thead><tr><th>#</th><th>Description</th><th>Account</th><th class="r">Qty</th><th class="r">Unit price</th><th class="r">Amount</th></tr></thead><tbody>
+    ${h.lines.map(l => `<tr><td class="muted">${l.line_no}</td><td>${esc(l.description)}</td><td><span class="code">${esc(l.account_code)}</span> ${esc(acctName(l.account_code))}</td><td class="r">${Number(l.qty)}</td><td class="r">${money(l.unit_price)}</td><td class="r">${money(l.amount)}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="totbox"><div><span>Before VAT</span><b>${money(h.subtotal)}</b></div><div><span>VAT ${Number(h.vat_rate)}%</span><b>${money(h.vat_amount)}</b></div><div><span>Total</span><b>${money(h.total)}</b></div><div><span>Outstanding</span><b style="color:${Number(h.outstanding) > 0 ? 'var(--accent)' : 'var(--ok)'}">${money(h.outstanding)}</b></div></div>
+    ${h.payments.length ? `<div class="ph2">Payments</div><table class="grid"><thead><tr><th>Payment</th><th>Date</th><th>Method</th><th class="r">Settled</th><th class="r">Tax withheld</th><th class="r">Cash</th></tr></thead><tbody>${h.payments.map(p => `<tr><td class="code">${esc(p.payment_no)}</td><td>${fdate(p.payment_date)}</td><td>${esc(p.method)}</td><td class="r">${money(p.settled)}</td><td class="r">${amt(p.wht_amount)}</td><td class="r">${money(p.cash)}</td></tr>`).join('')}</tbody></table>` : ''}
+    <div class="mfoot"><span class="sp"></span>${Number(h.outstanding) > 0 ? `<button class="b sm primary" id="iPay">${ICON.cash}${isAR ? 'Receive payment' : 'Pay bill'}</button>` : ''}<button class="b sm" data-close>Close</button></div>`, 'wide');
+    $$('[data-je]', m.el).forEach(a => a.onclick = e => { e.preventDefault(); if (a.dataset.je) openJe(a.dataset.je); });
+    $('#iPay', m.el) && ($('#iPay', m.el).onclick = () => { m.close(); payDoc(h); });
+  } catch (e) { fail(e); }
+}
+async function payDoc(h) {
+  const isAR = h.doc_type === 'AR';
+  const opts = await api('tax-options?date=' + asOf()).catch(fail); if (!opts) return;
+  const m = modal(`<div class="phead"><b>${isAR ? 'Receive payment for' : 'Pay'} ${esc(h.doc_no)}</b><button class="xbtn" data-close>×</button></div>
+  <p class="pnote" style="margin-top:0">${esc(h.partner)} · outstanding <b>${money(h.outstanding)}</b>. ${isAR ? 'If the customer withheld tax from the payment, choose the income type — the amount comes from the approved withholding rule.' : 'Choose the income type to withhold tax (PND3/53) — the rate comes from the approved withholding rule.'}</p>
+  <div class="fgrid"><label>Payment date<input type="date" id="pDate" value="${asOf()}"></label><label>Amount settled<input type="number" step="0.01" id="pAmt" value="${Number(h.outstanding)}"></label><label>Method<select id="pMeth"><option value="transfer">Bank transfer</option><option value="promptpay">PromptPay</option><option value="cheque">Cheque</option><option value="cash">Cash</option></select></label>
+  <label>Withholding tax<select id="pWht"><option value="">None</option>${opts.wht.map(w => `<option value="${w.key}"${isAR && w.key === 'service' ? ' selected' : ''}>${esc(w.label)} · ${pct(w.rate)}</option>`).join('')}</select></label>
+  <label>Bank account<select id="pBank">${META.accounts.filter(a => ['1110', '1120', '1130'].includes(a.account_code)).map(a => `<option value="${a.account_code}"${a.account_code === '1120' ? ' selected' : ''}>${esc(a.name_en)}</option>`).join('')}</select></label>
+  <label>Reference<input id="pRef" placeholder="optional"></label></div>
+  <div id="pPrev" class="msgs"></div>
+  <div class="mfoot"><button class="b sm" data-close>Cancel</button><span class="sp"></span><button class="b sm primary" id="pGo">${ICON.check}Record payment</button></div>`, 'mid');
+  const body = () => ({ doc_no: h.doc_no, payment_date: $('#pDate', m.el).value, settle: $('#pAmt', m.el).value, wht_category: $('#pWht', m.el).value || null, method: $('#pMeth', m.el).value, bank_account: $('#pBank', m.el).value, reference: $('#pRef', m.el).value || null });
+  let t = 0;
+  const prev = async () => {
+    const my = ++t;
+    try {
+      const r = await api('payments/preview', { body: body() }); if (my !== t) return;
+      $('#pPrev', m.el).innerHTML = `<div class="c">Settles ${money(r.settle)} of ${esc(h.doc_no)} · tax base ${money(r.wht_base)} (before VAT)${r.wht_rule ? ' · rule ' + esc(r.wht_rule) : ''}</div><div class="totbox"><div><span>Tax withheld</span><b>${money(r.wht)}</b></div><div><span>${isAR ? 'Cash received' : 'Cash paid'}</span><b>${money(r.cash)}</b></div><div><span>Left to pay</span><b>${money(r.outstanding_after)}</b></div></div>`;
+      $('#pGo', m.el).disabled = false;
+    } catch (e) { if (my === t) { $('#pPrev', m.el).innerHTML = `<div class="e">${esc(e.message)}</div>`; $('#pGo', m.el).disabled = true; } }
+  };
+  $$('input,select', m.el).forEach(i => i.addEventListener('input', prev));
+  $('#pGo', m.el).onclick = e => run(e.currentTarget, async () => { const r = await api('payments', { body: body() }); toast(`${r.payment_no} recorded · journal ${r.je_no}`, 'good'); m.close(); refresh(); });
+  prev();
+}
+async function newInvoice(kind) {
+  const isAR = kind === 'AR';
+  const opts = await api('tax-options?date=' + asOf()).catch(fail); if (!opts) return;
+  const lines = [{ qty: 1, account_code: isAR ? '4110' : '' }];
+  const parts = META.partners.filter(p => p.partner_type === (isAR ? 'customer' : 'vendor') || p.partner_type === 'both');
+  const m = modal(`<div class="phead"><b>${isAR ? 'New sales invoice' : 'New purchase bill'}</b><button class="xbtn" data-close>×</button></div>
+  <div class="fgrid"><label>${isAR ? 'Customer' : 'Vendor'}<select id="iPart"><option value="">Choose…</option>${parts.map(p => `<option value="${p.partner_id}">${esc(p.name)}</option>`).join('')}</select></label><label>Date<input type="date" id="iDate" value="${asOf()}"></label><label>Due date<input type="date" id="iDue" placeholder="from payment terms"></label>
+  <label>VAT<select id="iVat">${opts.vat.map(v => `<option value="${v.code}">${esc(v.name)} · ${pct(v.rate)} (v${v.version})</option>`).join('')}<option value="NONE">No VAT (seller not VAT-registered)</option></select></label><label class="full" style="grid-column:span 2">Description<input id="iDesc" placeholder="optional — shown on the journal entry"></label></div>
+  <table class="grid"><thead><tr><th style="width:38%">Description</th><th style="width:26%">Account</th><th class="r">Qty</th><th class="r">Unit price</th><th class="r">Amount</th><th></th></tr></thead><tbody id="iLines"></tbody></table>
+  <div class="actions"><button class="b sm line" id="iAdd">${ICON.plus}Add line</button></div>
+  <div id="iTot"></div>
+  <div class="pnote">VAT is calculated by the server from the approved VAT rule in force on the invoice date, and the invoice records which rule version it used.</div>
+  <div class="mfoot"><button class="b sm" data-close>Cancel</button><span class="sp"></span><button class="b sm primary" id="iGo">${ICON.check}Create and post</button></div>`, 'wide');
+  const tb = $('#iLines', m.el);
+  const flt = isAR ? (a => a.account_type === 'revenue') : (a => ['expense', 'asset'].includes(a.account_type) && !['1110', '1120', '1130', '1210', '1220', '1230', '1519'].includes(a.account_code));
+  const draw = () => {
+    tb.innerHTML = lines.map((l, i) => `<tr data-i="${i}"><td><input data-f="description" value="${esc(l.description || '')}" placeholder="Item or service"></td><td><select data-f="account_code">${acctOptions(l.account_code, flt)}</select></td><td><input type="number" step="0.001" data-f="qty" value="${l.qty ?? ''}"></td><td><input type="number" step="0.01" data-f="unit_price" value="${l.unit_price ?? ''}"></td><td class="r">${money(Number(l.qty || 0) * Number(l.unit_price || 0))}</td><td><button class="xbtn" data-rm="${i}">×</button></td></tr>`).join('');
+    $$('[data-f]', tb).forEach(inp => inp.oninput = inp.onchange = () => { lines[+inp.closest('tr').dataset.i][inp.dataset.f] = inp.value; const tr = inp.closest('tr'); const l = lines[+tr.dataset.i]; tr.children[4].textContent = money(Number(l.qty || 0) * Number(l.unit_price || 0)); tot(); });
+    $$('[data-rm]', tb).forEach(b => b.onclick = () => { lines.splice(+b.dataset.rm, 1); draw(); });
+    tot();
+  };
+  const tot = () => {
+    const sub = lines.reduce((a, l) => a + Math.round(Number(l.qty || 0) * Number(l.unit_price || 0) * 100) / 100, 0);
+    const v = opts.vat.find(x => x.code === $('#iVat', m.el).value); const vat = v ? Math.round(sub * v.rate * 100) / 100 : 0;
+    $('#iTot', m.el).innerHTML = `<div class="totbox"><div><span>Before VAT</span><b>${money(sub)}</b></div><div><span>VAT ${v ? pct(v.rate) : '–'}</span><b>${money(vat)}</b></div><div><span>Total</span><b>${money(sub + vat)}</b></div></div>`;
+  };
+  $('#iVat', m.el).onchange = tot;
+  $('#iAdd', m.el).onclick = () => { lines.push({ qty: 1, account_code: lines.at(-1)?.account_code || '' }); draw(); };
+  $('#iGo', m.el).onclick = e => run(e.currentTarget, async () => {
+    const r = await api('invoices', { body: { doc_type: kind, partner_id: $('#iPart', m.el).value, doc_date: $('#iDate', m.el).value, due_date: $('#iDue', m.el).value || null, vat_code: $('#iVat', m.el).value, description: $('#iDesc', m.el).value || null, lines } });
+    toast(`${r.doc_no} posted · VAT ${money(r.vat)} · total ${money(r.total)}`, 'good'); m.close(); refresh();
+  });
+  draw();
+}
+
+/* =================== payroll =================== */
+let PAYSEL = null, RUNS = null;
+async function loadPayroll() {
+  $$('#paySeg button').forEach(b => b.classList.toggle('on', b.dataset.k === ui.payKind));
+  const emps = ui.payKind === 'emps';
+  $('#pSplit').hidden = emps; $('#pEmps').hidden = !emps; $('#bNewRun').hidden = emps;
+  if (emps) return loadEmployees();
+  RUNS = (await api('payroll')).runs;
+  if (!PAYSEL || !RUNS.find(r => r.run_id === PAYSEL)) PAYSEL = RUNS[0]?.run_id;
+  $('#pList').innerHTML = RUNS.map(r => `<div class="sitem${r.run_id === PAYSEL ? ' on' : ''}" data-run="${esc(r.run_id)}"><div class="t1">${esc(r.run_id)}<span class="sp"></span>${chip(r.status)}</div><div class="t2"><span>Pay date ${fdate(r.pay_date)}</span><span>${r.employees} employees</span></div><div class="t2"><span>Gross <b class="num">${money(r.gross)}</b></span><span>Net <b class="num">${money(r.net)}</b></span></div></div>`).join('') || '<div class="empty"><b>No payroll yet</b>Create the first run.</div>';
+  $$('[data-run]', $('#pList')).forEach(el => el.onclick = () => { PAYSEL = el.dataset.run; loadPayroll(); });
+  if (PAYSEL) await showRun(PAYSEL); else $('#pDetail').innerHTML = '';
+}
+async function showRun(id) {
+  const r = await api('payroll/' + encodeURIComponent(id));
+  const draft = r.status === 'draft';
+  const T = k => r.lines.reduce((a, l) => a + Number(l[k]), 0);
+  $('#pDetail').innerHTML = `<div class="shead"><h2>${esc(r.run_id)}</h2>${chip(r.status)}<span class="muted">Pay date ${fdate(r.pay_date)} · period ${esc(r.period_id)}</span>${r.je_no ? `<a href="#" class="code" data-je="${esc(r.je_no)}">${esc(r.je_no)}</a>` : ''}<span class="sp"></span>
+  ${draft ? `<button class="b sm line" id="rCalc">${ICON.calc}Recalculate</button><button class="b sm primary" id="rPost">${ICON.check}Post payroll</button>` : ''}</div>
+  <div class="stats"><div class="kpi"><span>Gross pay</span><b>${money(T('gross_pay'))}</b></div><div class="kpi"><span>Social security ×2</span><b>${money(T('sso_employee'))}</b></div><div class="kpi"><span>Salary tax (PND1)</span><b>${money(T('wht_pnd1'))}</b></div><div class="kpi"><span>Net pay</span><b>${money(T('net_pay'))}</b></div><div class="kpi"><span>Company cost</span><b>${money(T('gross_pay') + T('sso_employer'))}</b></div></div>
+  <table class="grid"><thead><tr><th>Employee</th><th class="r">Salary</th><th class="r">Overtime</th><th class="r">Commission</th><th class="r">Allowance</th><th class="r">Gross</th><th class="r">Social sec.</th><th class="r">Salary tax</th><th class="r">Other ded.</th><th class="r">Net pay</th><th>Tax profile</th></tr></thead><tbody>
+  ${r.lines.map(l => `<tr data-emp="${esc(l.employee_id)}"><td class="click" data-slip="${esc(l.employee_id)}" style="cursor:pointer;min-width:190px"><b>${esc(l.employee_name)}</b><div class="th2">${esc(l.employee_id)} · ${esc(l.position)}</div></td><td class="r">${money(l.base_salary)}</td>${['overtime', 'commission', 'allowance'].map(f => draft ? `<td style="width:105px"><input type="number" step="0.01" data-in="${f}" value="${Number(l[f]) || ''}" placeholder="0"></td>` : `<td class="r">${amt(l[f])}</td>`).join('')}<td class="r"><b>${money(l.gross_pay)}</b></td><td class="r">${money(l.sso_employee)}</td><td class="r">${money(l.wht_pnd1)}</td>${draft ? `<td style="width:105px"><input type="number" step="0.01" data-in="other_deduction" value="${Number(l.other_deduction) || ''}" placeholder="0"></td>` : `<td class="r">${amt(l.other_deduction)}</td>`}<td class="r"><b>${money(l.net_pay)}</b></td><td>${(l.calc_trace?.profile_status === 'default') ? '<span class="chip warn">default</span>' : '<span class="chip ok">approved</span>'}</td></tr>`).join('')}
+  <tr class="tot"><td>Total</td><td class="r">${money(T('base_salary'))}</td><td class="r">${money(T('overtime'))}</td><td class="r">${money(T('commission'))}</td><td class="r">${money(T('allowance'))}</td><td class="r">${money(T('gross_pay'))}</td><td class="r">${money(T('sso_employee'))}</td><td class="r">${money(T('wht_pnd1'))}</td><td class="r">${money(T('other_deduction'))}</td><td class="r">${money(T('net_pay'))}</td><td></td></tr></tbody></table>
+  <div class="pnote pad" style="padding-top:8px">Click an employee for the payslip and how the tax was calculated. ${draft ? 'Change overtime, commission, allowance or deductions, then Recalculate.' : 'Posted payroll never changes. Back-dated rule changes produce a recalculation report instead.'}</div>`;
+  wireGo($('#pDetail'));
+  $$('[data-slip]', $('#pDetail')).forEach(td => td.onclick = () => payslip(r, r.lines.find(l => l.employee_id === td.dataset.slip)));
+  const inputs = () => { const o = {}; $$('tr[data-emp]', $('#pDetail')).forEach(tr => { o[tr.dataset.emp] = {}; $$('[data-in]', tr).forEach(i => o[tr.dataset.emp][i.dataset.in] = Number(i.value || 0)); }); return o; };
+  $('#rCalc') && ($('#rCalc').onclick = e => run(e.currentTarget, async () => { await api(`payroll/${encodeURIComponent(id)}/recalc`, { body: { inputs: inputs() } }); toast('Recalculated from the approved rules', 'good'); await showRun(id); loadPayrollList(); }));
+  $('#rPost') && ($('#rPost').onclick = e => run(e.currentTarget, async () => {
+    if (!await confirmBox(`Post ${id}? This creates the payroll journal entry and the run can no longer change.`)) return;
+    await api(`payroll/${encodeURIComponent(id)}/recalc`, { body: { inputs: inputs() } });
+    const res = await api(`payroll/${encodeURIComponent(id)}/post`, { body: {} });
+    toast(`${id} posted · journal ${res.je_no}`, 'good'); refresh();
+  }));
+}
+async function loadPayrollList() { RUNS = (await api('payroll')).runs; $$('[data-run]', $('#pList')).forEach(el => { const r = RUNS.find(x => x.run_id === el.dataset.run); if (r) el.querySelector('.t2:last-child').innerHTML = `<span>Gross <b class="num">${money(r.gross)}</b></span><span>Net <b class="num">${money(r.net)}</b></span>`; }); }
+function payslip(run, l) {
+  const t = l.calc_trace || {}, pi = t.pnd1_inputs || {};
+  modal(`<div class="phead"><b>Payslip · ${esc(l.employee_name)}</b><button class="xbtn" data-close>×</button></div>
+  <div class="pnote" style="margin-top:0">${esc(l.employee_id)} · ${esc(l.position)} · ${esc(run.run_id)} · pay date ${fdate(run.pay_date)}</div>
+  <div class="payslip">
+    <div class="ln"><span>Salary</span><span>${money(l.base_salary)}</span></div>
+    ${Number(l.overtime) ? `<div class="ln"><span>Overtime</span><span>${money(l.overtime)}</span></div>` : ''}${Number(l.commission) ? `<div class="ln"><span>Commission</span><span>${money(l.commission)}</span></div>` : ''}${Number(l.allowance) ? `<div class="ln"><span>Allowance</span><span>${money(l.allowance)}</span></div>` : ''}
+    <div class="ln t"><span>Gross pay</span><span>${money(l.gross_pay)}</span></div>
+    <div class="ln"><span>Social security <span class="tag">SSO v${t.rule_versions?.SSO ?? '?'}</span></span><span>− ${money(l.sso_employee)}</span></div>
+    <div class="ln"><span>Salary tax PND1 <span class="tag">PND1_MONTHLY v${t.rule_versions?.PND1_MONTHLY ?? '?'}</span></span><span>− ${money(l.wht_pnd1)}</span></div>
+    ${Number(l.other_deduction) ? `<div class="ln"><span>Other deductions</span><span>− ${money(l.other_deduction)}</span></div>` : ''}
+    <div class="ln t"><span>Net pay</span><span>${money(l.net_pay)}</span></div>
+  </div>
+  <div class="ph2">How the salary tax was calculated</div>
+  <table class="trace num"><tr><td class="muted">Income this month</td><td>${money(pi.monthly_income)}</td></tr><tr><td class="muted">Income earlier this year</td><td>${money(pi.ytd_income)}</td></tr><tr><td class="muted">Months left in the year (incl. this)</td><td>${pi.months_remaining}</td></tr><tr><td class="muted">Tax already withheld this year</td><td>${money(pi.ytd_withheld)}</td></tr><tr><td class="muted">Social security for the year (estimate)</td><td>${money(pi.annual_sso)}</td></tr><tr><td class="muted">Allowances from tax profile</td><td>${money(pi.other_allowances)} ${Object.entries(t.allowances || {}).map(([k, v]) => `<span class="tag">${esc(k.replace('PIT_ALLOW_', ''))} ${m0(v)}</span>`).join(' ')}</td></tr><tr><td class="muted">Tax profile</td><td>${t.profile_status === 'default' ? '<span class="chip warn">none — defaults used</span>' : '<span class="chip ok">approved</span>'}</td></tr><tr><td class="muted">Rule versions</td><td>${Object.entries(t.rule_versions || {}).map(([k, v]) => `<span class="tag">${esc(k)} v${v}</span>`).join(' ')}</td></tr></table>
+  <div class="mfoot"><span class="sp"></span><button class="b sm" data-close>Close</button></div>`, 'mid');
+}
+async function newRun() {
+  const d = new Date(asOf()); const last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  const iso = `${last.getFullYear()}-${String(last.getMonth() + 1).padStart(2, '0')}-${String(last.getDate()).padStart(2, '0')}`;
+  const m = modal(`<div class="phead"><b>New payroll run</b><button class="xbtn" data-close>×</button></div>
+  <div class="fgrid two"><label>Pay date<input type="date" id="rDate" value="${iso}"></label><label>Run number<input id="rId" placeholder="PR-yymm (automatic)"></label></div>
+  <div class="pnote">sERP calculates every active employee from their salary, their approved tax profile and year-to-date figures, using the tax rules in force on the pay date. The run starts as a draft so you can add overtime and commission.</div>
+  <div class="mfoot"><button class="b sm" data-close>Cancel</button><span class="sp"></span><button class="b sm primary" id="rGo">${ICON.calc}Calculate draft</button></div>`);
+  $('#rGo', m.el).onclick = e => run(e.currentTarget, async () => { const r = await api('payroll', { body: { pay_date: $('#rDate', m.el).value, run_id: $('#rId', m.el).value || null } }); PAYSEL = r.run_id; toast(`${r.run_id} calculated (draft)`, 'good'); m.close(); refresh(); });
+}
+let EMPS = null, ALLOWF = null;
+async function loadEmployees() {
+  const year = asOf().slice(0, 4);
+  [EMPS, ALLOWF] = await Promise.all([api('employees?year=' + year), api('tax-options?date=' + asOf())]);
+  const f = ALLOWF.allowance_fields;
+  const show = (a, fld) => { const v = (a || {})[fld.field]; if (v == null || v === false || v === 0) return '<span class="muted">–</span>'; if (fld.kind === 'flag') return '<span class="chip ok plain">yes</span>'; return fld.kind === 'count' ? String(v) : m0(v); };
+  $('#pEmps').innerHTML = `<table class="grid"><thead><tr><th>Employee</th><th>Department</th><th class="r">Salary</th>${f.map(x => `<th class="r" title="${esc(x.label)}">${esc(x.label.replace(/ allowance.*$/i, '').replace(/ premium.*$/i, ''))}</th>`).join('')}<th>Profile ${year}</th><th class="r">Withheld to ${EMPS.employees[0]?.opening_as_of ? fdate(EMPS.employees[0].opening_as_of) : 'date'}</th><th></th></tr></thead><tbody>
+  ${EMPS.employees.map(e => `<tr><td><b>${esc(e.first_name)} ${esc(e.last_name)}</b><div class="th2">${esc(e.employee_id)} · ${esc(e.position)}</div></td><td>${esc(e.dept_code)}</td><td class="r">${money(e.monthly_salary)}</td>${f.map(x => `<td class="r">${show(e.allowances, x)}</td>`).join('')}<td>${e.profile_status ? chip(e.profile_status) + ` <span class="th2">${esc(e.approved_by || '')}</span>` : '<span class="chip warn">none</span>'}</td><td class="r">${amt(e.ytd_withheld)}</td><td class="r"><button class="b xs line" data-prof="${esc(e.employee_id)}">${ICON.edit}Edit</button></td></tr>`).join('')}
+  </tbody></table><div class="pnote pad">Allowance fields come from the tax rules (PIT allowances with an input field). Adding an allowance type to the rules adds a column here automatically. Without an approved profile, payroll uses defaults and flags the payslip.</div>`;
+  $$('[data-prof]', $('#pEmps')).forEach(b => b.onclick = () => editProfile(EMPS.employees.find(e => e.employee_id === b.dataset.prof), year));
+}
+function editProfile(e, year) {
+  const f = ALLOWF.allowance_fields, a = e.allowances || {};
+  const m = modal(`<div class="phead"><b>Tax profile ${year} · ${esc(e.first_name)} ${esc(e.last_name)}</b><button class="xbtn" data-close>×</button></div>
+  <div class="fgrid two">${f.map(x => x.kind === 'flag' ? `<label class="ck full"><input type="checkbox" data-a="${x.field}" ${a[x.field] ? 'checked' : ''}>${esc(x.label)} <span class="muted">· ${m0(x.amount)}</span></label>` : `<label>${esc(x.label)}<input type="number" min="0" step="${x.kind === 'count' ? 1 : 0.01}" data-a="${x.field}" value="${a[x.field] ?? ''}" placeholder="${x.kind === 'count' ? 'number' : 'amount claimed'}"><span class="th2">${x.kind === 'count' ? `${m0(x.amount)} each${x.max_count ? ', max ' + x.max_count : ''}` : `up to ${m0(x.amount)}`}${x.evidence ? ' · evidence needed' : ''}</span></label>`).join('')}</div>
+  ${e.evidence?.length ? `<div class="pnote">Evidence on file: ${e.evidence.map(v => `<span class="tag">${esc(v.key)}</span>`).join(' ')}</div>` : ''}
+  <div class="pnote">Saving approves the profile for ${year} as ${esc(ui.user)}. The next payroll run recalculates the remaining months; posted payslips do not change.</div>
+  <div class="mfoot"><button class="b sm" data-close>Cancel</button><span class="sp"></span><button class="b sm primary" id="eGo">${ICON.check}Save and approve</button></div>`, 'mid');
+  $('#eGo', m.el).onclick = ev => run(ev.currentTarget, async () => {
+    const o = {}; $$('[data-a]', m.el).forEach(i => o[i.dataset.a] = i.type === 'checkbox' ? i.checked : (i.value === '' ? 0 : Number(i.value)));
+    toast((await api(`employees/${encodeURIComponent(e.employee_id)}/profile`, { method: 'PUT', body: { tax_year: Number(year), allowances: o } })).message, 'good'); m.close(); loadEmployees();
+  });
+}
+
+/* =================== tax rules =================== */
+const CATN = { VAT: 'Value added tax', WHT: 'Withholding tax', PIT: 'Personal income tax', SSO: 'Social security', OTHER: 'Other' };
+const RTN = { flat_rate: 'flat rate', rate_by_category: 'rate by income type', rate_with_cap: 'rate with cap', fixed_amount: 'fixed amount', bracket_table: 'bracket table', threshold: 'threshold', formula: 'formula' };
+let TAXOPEN = {};
+async function loadTax() {
+  $$('#taxSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === ui.taxKind));
+  $('#tDateLab').hidden = ui.taxKind !== 'rules';
+  if (ui.taxKind === 'rules' || ui.taxKind === 'work' || !TAXCACHE) { TAXCACHE = await api('tax/rules?date=' + asOf()); renderRing(); }
+  ({ rules: taxRules, work: taxWork, io: taxIO, pol: taxPolicies, log: taxLog })[ui.taxKind]();
+}
+function paramsHtml(rt, p) {
+  if (rt === 'bracket_table') return `<table class="ptable"><tr><th>From</th><th>To</th><th>Rate</th></tr>${p.brackets.map(b => `<tr><td>${m0(b.from)}</td><td>${b.to == null ? 'and above' : m0(b.to)}</td><td><b>${pct(b.rate)}</b></td></tr>`).join('')}</table>`;
+  if (rt === 'rate_by_category') return `<table class="ptable"><tr><th>Income type</th><th></th><th>Rate</th></tr>${p.categories.map(c => `<tr><td>${esc(c.label_en || c.key)}</td><td class="muted">${esc(c.label_th || '')}</td><td><b>${pct(c.rate)}</b></td></tr>`).join('')}</table>`;
+  if (rt === 'formula') return `<div class="formula">${esc(p.output)} = ${esc(p.expression)}</div><div class="pnote">Inputs: ${p.inputs.map(i => `<span class="tag">${esc(i)}</span>`).join(' ')}</div>`;
+  return `<table class="ptable">${Object.entries(p).map(([k, v]) => `<tr><th>${esc(k.replace(/_/g, ' '))}</th><td><b>${typeof v === 'number' && (k === 'rate') ? pct(v) : typeof v === 'number' ? m0(v) : esc(v ?? '–')}</b></td></tr>`).join('')}</table>`;
+}
+function versionDetail(r, v) {
+  const me = ui.user, appr = v.approvals || [], okN = appr.filter(a => a.decision === 'approve').length;
+  let acts = '';
+  if (v.status === 'draft') acts = `<button class="b sm primary" data-act="submit">${ICON.send}Submit for approval</button>`;
+  if (v.status === 'submitted') acts = `<button class="b sm okb line" data-act="approve">${ICON.check}Approve</button><button class="b sm danger line" data-act="reject">${ICON.x}Reject</button><button class="b sm line" data-act="recalc" title="Old vs new for closed periods">${ICON.calc}Back-dating report</button>`;
+  return `<div class="vdetail"><div class="kv">
+  <dt>Version</dt><dd><b>v${v.version}</b> ${chip(v.status)} ${v.in_force ? '<span class="chip ok">in force on ' + fdate(asOf()) + '</span>' : ''}</dd>
+  <dt>Effective</dt><dd>${fdate(v.effective_from)} → ${v.effective_to ? fdate(v.effective_to) : 'open-ended'}${v.pending_close ? ` <span class="chip warn">closes ${fdate(v.pending_close)} when successor is approved</span>` : ''}</dd>
+  <dt>Values</dt><dd>${paramsHtml(r.rule_type, v.params)}</dd>
+  <dt>Rounding</dt><dd>${esc(v.rounding)}</dd>
+  <dt>Legal reference</dt><dd>${esc(v.legal_reference || '–')}${v.source_url ? ` · <a href="${esc(v.source_url)}" target="_blank" rel="noopener noreferrer">source</a>` : ''}</dd>
+  ${v.notes ? `<dt>Notes</dt><dd>${esc(v.notes)}</dd>` : ''}
+  <dt>Made by</dt><dd>${esc(v.created_by || '–')}${v.submitted_by ? ' · submitted by ' + esc(v.submitted_by) : ''}${v.approved_at ? ' · approved ' + fts(v.approved_at) : ''}</dd>
+  ${v.status === 'submitted' || appr.length ? `<dt>Approvals</dt><dd>${okN}/${v.required_approvals} needed from ${esc((v.approver_roles || []).join(', '))} ${appr.map(a => `<span class="chip ${a.decision === 'approve' ? 'ok' : 'bad'}">${esc(a.approver)} ${a.decision}d</span>`).join(' ')}</dd>` : ''}
+  </div>${acts ? `<div class="actions">${acts}<span class="pnote" style="margin:6px 0 0 6px">acting as <b>${esc(me)}</b></span></div>` : ''}</div>`;
+}
+function taxRules() {
+  const T = TAXCACHE;
+  const cats = {}; T.rules.forEach(r => (cats[r.category] ||= []).push(r));
+  const tc = {}; T.test_cases.forEach(t => (tc[t.rule] ||= []).push(t));
+  const tres = Object.fromEntries(T.tests.map(t => [t.id, t]));
+  $('#tBody').innerHTML = (T.validation.errors.length ? `<div class="pad"><div class="msgs">${T.validation.errors.map(e => `<div class="e">${esc(e)}</div>`).join('')}</div></div>` : '') +
+    Object.entries(cats).map(([c, rs]) => `<div class="rulecat"><h4>${esc(CATN[c] || c)}</h4>${rs.map(r => {
+      const open = TAXOPEN[r.code];
+      const inf = r.versions.find(v => v.in_force);
+      const tests = tc[r.code] || [], tok = tests.filter(t => tres[t.id]?.ok).length;
+      return `<div class="rule"><div class="rh" data-rule="${esc(r.code)}"><span class="code">${esc(r.code)}</span><span class="nm">${esc(r.name_en)}</span><span class="muted">${esc(r.name_th || '')}</span><span class="sp"></span><span class="tag">${esc(RTN[r.rule_type])}</span>${r.is_mandatory ? '<span class="tag">mandatory</span>' : ''}${tests.length ? `<span class="chip ${tok === tests.length ? 'ok' : 'bad'}">${tok}/${tests.length} tests</span>` : '<span class="chip mid">no tests</span>'}${inf ? `<span class="chip ok">v${inf.version} in force</span>` : '<span class="chip warn">none in force</span>'}</div>
+      <div class="vline">${r.versions.map(v => `<button class="vchip ${v.status}${v.in_force ? ' inforce' : ''}${open?.v === v.version ? ' on' : ''}" data-rv="${esc(r.code)}:${v.version}"><b>v${v.version} · ${v.status}</b><span>${fdate(v.effective_from)} – ${v.effective_to ? fdate(v.effective_to) : 'open'}</span></button>`).join('')}</div>
+      ${open ? versionDetail(r, r.versions.find(v => v.version === open.v)) : ''}</div>`;
+    }).join('')}</div>`).join('') + '<div style="height:16px"></div>';
+  $$('[data-rv]', $('#tBody')).forEach(b => b.onclick = () => { const [code, v] = b.dataset.rv.split(':'); TAXOPEN = TAXOPEN[code]?.v === +v ? {} : { [code]: { v: +v } }; taxRules(); });
+  $$('[data-rule]', $('#tBody')).forEach(h => h.onclick = () => { const r = T.rules.find(x => x.code === h.dataset.rule); const v = r.versions.find(x => x.in_force) || r.versions.at(-1); TAXOPEN = TAXOPEN[r.code] ? {} : { [r.code]: { v: v.version } }; taxRules(); });
+  $$('[data-act]', $('#tBody')).forEach(b => b.onclick = () => { const code = Object.keys(TAXOPEN)[0]; ruleAction(b, code, TAXOPEN[code].v, b.dataset.act); });
+}
+async function ruleAction(btn, code, ver, act) {
+  let comment = null;
+  if (act === 'reject') { comment = await promptBox('Reject ' + code + ' v' + ver, 'Reason (sent back to the maker)'); if (!comment) return; }
+  if (act === 'approve' && !await confirmBox(`Approve ${code} v${ver} as ${ui.user}? If this completes the required approvals, the version goes live on its effective date.`)) return;
+  run(btn, async () => {
+    const r = await api('tax/action', { body: { rule: code, version: ver, action: act, comment } });
+    if (act === 'recalc') modal(`<div class="phead"><b>Back-dating report</b><button class="xbtn" data-close>×</button></div><div class="msgs">${r.message.split('\n').map(l => `<div class="c">${esc(l)}</div>`).join('')}</div><div class="pnote">A second person confirms the report under Approvals. Then the approval can complete. Posted documents are not changed.</div><div class="mfoot"><span class="sp"></span><button class="b sm" data-close>Close</button></div>`, 'mid');
+    else toast(r.message, 'good');
+    TAXCACHE = null; await loadTax(); refreshHero();
+  });
+}
+async function taxWork() {
+  const T = TAXCACHE, rc = (await api('tax/recalcs')).recalcs;
+  const pend = T.rules.flatMap(r => r.versions.filter(v => ['draft', 'submitted'].includes(v.status)).map(v => ({ r, v })));
+  $('#tBody').innerHTML = `<div class="pad"><h3 style="margin:0 0 10px;font:650 15px var(--display)">Rule versions waiting</h3>
+  ${pend.length ? pend.map(({ r, v }) => `<div class="rule"><div class="rh"><span class="code">${esc(r.code)}</span><span class="nm">${esc(r.name_en)}</span><span class="sp"></span>${chip(v.status)}</div>${versionDetail(r, v).replace('<div class="vdetail">', `<div class="vdetail" data-code="${esc(r.code)}" data-ver="${v.version}">`)}</div>`).join('') : '<div class="empty"><b>Nothing waiting</b>Import a rule update to start a change.</div>'}
+  <h3 style="margin:22px 0 10px;font:650 15px var(--display)">Back-dating reports</h3>
+  ${rc.length ? `<table class="grid"><thead><tr><th>#</th><th>Rule</th><th>Mode</th><th>Periods</th><th>Changes</th><th class="r">Net difference</th><th>Status</th><th>Made / confirmed by</th><th></th></tr></thead><tbody>${rc.map(x => `<tr><td>${x.recalc_id}</td><td><span class="code">${esc(x.rule_code)}</span> v${x.version_no}</td><td>${esc(x.mode.replace(/_/g, ' '))}</td><td>${fdate(x.period_from)} – ${fdate(x.period_to)}</td><td><a href="#" data-rep="${x.recalc_id}">${x.report.length} line(s)</a></td><td class="r">${money(x.total_difference)}</td><td>${chip(x.status)}</td><td>${esc(x.created_by)}${x.confirmed_by ? ' / ' + esc(x.confirmed_by) : ''}</td><td class="r">${x.status === 'pending' ? `<button class="b xs line" data-conf="${x.recalc_id}">${ICON.check}Confirm</button>` : ''}</td></tr>`).join('')}</tbody></table>` : '<div class="pnote">No back-dated changes so far.</div>'}</div>`;
+  $$('[data-act]', $('#tBody')).forEach(b => { const d = b.closest('[data-code]'); b.onclick = () => ruleAction(b, d.dataset.code, +d.dataset.ver, b.dataset.act); });
+  $$('[data-conf]', $('#tBody')).forEach(b => b.onclick = () => run(b, async () => { toast((await api(`tax/recalcs/${b.dataset.conf}/confirm`, { body: {} })).message, 'good'); taxWork(); }));
+  $$('[data-rep]', $('#tBody')).forEach(a => a.onclick = e => { e.preventDefault(); const x = rc.find(y => y.recalc_id === +a.dataset.rep); modal(`<div class="phead"><b>Report ${x.recalc_id} · ${esc(x.rule_code)} v${x.version_no}</b><button class="xbtn" data-close>×</button></div><table class="grid"><thead><tr><th>Run</th><th>Employee</th><th class="r">SSO old</th><th class="r">SSO new</th><th class="r">PND1 old</th><th class="r">PND1 new</th></tr></thead><tbody>${x.report.map(l => `<tr><td>${esc(l.run_id)}</td><td>${esc(l.employee_id)}</td><td class="r">${money(l.sso_old)}</td><td class="r">${money(l.sso_new)}</td><td class="r">${money(l.pnd1_old)}</td><td class="r"><b>${money(l.pnd1_new)}</b></td></tr>`).join('')}</tbody></table><div class="mfoot"><span class="sp"></span><button class="b sm" data-close>Close</button></div>`, 'mid'); });
+}
+function taxIO() {
+  $('#tBody').innerHTML = `<div class="pad" style="max-width:980px">
+  <div class="dgrid" style="padding:0"><div class="card c5"><h3>Export the rule set</h3><p class="pnote" style="margin-top:0">Download every rule, version and test case. Give the file to Claude (or an accountant) together with the law change. Both formats carry the same rules and the same checksum.</p>
+  <div class="actions"><button class="b sm primary" data-exp="json">${ICON.dl}JSON</button><button class="b sm line" data-exp="xlsx">${ICON.dl}Excel (.xlsx)</button></div>
+  <div class="ph2">Suggested message to Claude</div><div class="formula" id="tPrompt">Here is our tax rule export. [Describe the law change and paste the source link.] Please add new draft versions with effective dates, update the test cases, fill change_summary and legal_reference, and return the file in the same format.</div><div class="actions"><button class="b xs line" id="tCopy">Copy text</button></div></div>
+  <div class="card c7"><h3>Import an updated file</h3><label class="drop" id="tDrop"><input type="file" id="tFile" accept=".json,.xlsx" hidden><b>Drop the updated .json or .xlsx here</b>or click to choose a file. sERP checks it first and shows every change — nothing is applied until you confirm.</label><div id="tRes"></div></div></div></div>`;
+  $$('[data-exp]', $('#tBody')).forEach(b => b.onclick = () => run(b, async () => {
+    const r = await api('tax/export?fmt=' + b.dataset.exp, { raw: true });
+    const name = (r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/)?.[1] || 'tax_rules.' + b.dataset.exp;
+    const url = URL.createObjectURL(await r.blob()); const a = document.createElement('a'); a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+    toast('Exported ' + name, 'good');
+  }));
+  $('#tCopy').onclick = () => { navigator.clipboard?.writeText($('#tPrompt').textContent); toast('Copied', 'good'); };
+  const drop = $('#tDrop'), inp = $('#tFile');
+  let file = null;
+  const check = async (apply) => {
+    if (!file) return;
+    $('#tRes').innerHTML = '<div class="pnote">Checking…</div>';
+    try {
+      const r = await api(`tax/import?name=${encodeURIComponent(file.name)}${apply ? '&apply=1' : ''}`, { body: await file.arrayBuffer() });
+      const add = c => c.trim().startsWith('+') ? ' add' : '';
+      $('#tRes').innerHTML = `<div class="ph2">${esc(r.file)} ${r.applied ? '<span class="chip ok">applied as draft · batch ' + r.batch + '</span>' : r.errors.length ? '<span class="chip bad">' + r.errors.length + ' error(s) — cannot import</span>' : '<span class="chip acc">ready to import</span>'}</div>
+      ${r.change_summary ? `<div class="pnote"><b>Change summary:</b> ${esc(r.change_summary)}</div>` : ''}
+      <div class="msgs">${r.errors.map(e => `<div class="e">${esc(e)}</div>`).join('')}${r.warnings.map(e => `<div class="w">${esc(e)}</div>`).join('')}${r.changes.map(c => `<div class="c${add(c)}">${esc(c)}</div>`).join('') || (r.errors.length ? '' : '<div class="c">No changes compared with the current rules.</div>')}</div>
+      ${!r.applied && !r.errors.length && r.changes.length ? `<div class="actions"><button class="b sm primary" id="tApply">${ICON.up}Import as drafts</button><span class="pnote" style="margin:6px">New versions start as drafts and still need submit + approval.</span></div>` : ''}
+      ${r.applied ? `<div class="actions"><button class="b sm line" id="tGoWork">Go to Approvals</button></div>` : ''}`;
+      $('#tApply') && ($('#tApply').onclick = e => run(e.currentTarget, async () => { await check(true); TAXCACHE = null; refreshHero(); }));
+      $('#tGoWork') && ($('#tGoWork').onclick = () => { ui.taxKind = 'work'; save(); loadTax(); });
+    } catch (e) { $('#tRes').innerHTML = `<div class="msgs"><div class="e">${esc(e.message)}</div>${(e.details?.errors || []).map(x => `<div class="e">${esc(x)}</div>`).join('')}</div>`; }
+  };
+  inp.onchange = () => { file = inp.files[0]; check(false); };
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); file = e.dataTransfer.files[0]; check(false); };
+}
+async function taxPolicies() {
+  const p = (await api('tax/policies')).policies;
+  const roles = ['finance_manager', 'md', 'tax_admin', 'accountant'];
+  $('#tBody').innerHTML = `<div class="pad" style="max-width:1000px"><table class="grid"><thead><tr><th>Tax type</th><th>Approvals needed</th><th>Who may approve</th><th>Remind after (days)</th><th>Back-dating into closed periods</th><th></th></tr></thead><tbody>
+  ${Object.entries(p).map(([c, x]) => `<tr data-cat="${c}"><td><b>${esc(CATN[c])}</b> <span class="tag">${c}</span>${x.approval?.company_specific ? ' <span class="chip acc plain">company</span>' : ' <span class="th2">default</span>'}</td>
+  <td style="width:130px"><select data-k="req">${[1, 2, 3].map(n => `<option${x.approval?.required_approvals === n ? ' selected' : ''}>${n}</option>`).join('')}</select></td>
+  <td>${roles.map(r => `<label class="ck" style="display:inline-flex!important;margin-right:10px"><input type="checkbox" data-role="${r}" ${(x.approval?.approver_roles || []).includes(r) ? 'checked' : ''}>${r.replace('_', ' ')}</label>`).join('')}</td>
+  <td style="width:110px"><input type="number" min="1" data-k="esc" value="${x.approval?.escalate_after_days || ''}"></td>
+  <td style="width:220px"><select data-k="retro">${[['block', 'Block'], ['adjust_next_period', 'Adjust in next period'], ['recalculate_reopen', 'Reopen and recalculate']].map(([v, l]) => `<option value="${v}"${x.retro?.mode === v ? ' selected' : ''}>${l}</option>`).join('')}</select></td>
+  <td><button class="b xs line" data-savep>Save</button></td></tr>`).join('')}</tbody></table>
+  <div class="pnote">Changes apply to this company and are written to the change log. Only the managing director or finance manager can change policies. Approvers can never approve their own changes, whatever is set here.</div></div>`;
+  $$('[data-savep]', $('#tBody')).forEach(b => b.onclick = () => run(b, async () => {
+    const tr = b.closest('tr'), cat = tr.dataset.cat;
+    const rolesSel = $$('[data-role]', tr).filter(i => i.checked).map(i => i.dataset.role);
+    if (!rolesSel.length) throw new Error('Choose at least one approver role');
+    await api('tax/policies', { method: 'PUT', body: { kind: 'approval', category: cat, required_approvals: +$('[data-k=req]', tr).value, approver_roles: rolesSel, escalate_after_days: +$('[data-k=esc]', tr).value || null } });
+    await api('tax/policies', { method: 'PUT', body: { kind: 'retro', category: cat, mode: $('[data-k=retro]', tr).value } });
+    toast(`${cat} policy saved`, 'good'); taxPolicies();
+  }));
+}
+async function taxLog() {
+  const r = await api('tax/log');
+  const brief = l => { const n = l.new_value || {}, o = l.old_value || {}; if (l.object_type === 'tax_rule_version') return `v${n.version_no ?? o.version_no} ${o.status && n.status && o.status !== n.status ? o.status + ' → ' + n.status : (n.status || o.status || '')}${o.effective_to !== n.effective_to && l.action === 'update' ? ' · end ' + (o.effective_to || 'open') + ' → ' + (n.effective_to || 'open') : ''}`; if (l.object_type === 'tax_rule_approval') return `${n.approver} ${n.decision}`; if (l.object_type === 'employee_tax_profile') return JSON.stringify(n.allowances || {}); if (l.object_type === 'tax_recalc_run') return `${n.status} · ${n.mode}`; return n.category ? `${n.category} ${n.mode || ((n.required_approvals || '') + ' approval(s)')}` : ''; };
+  $('#tBody').innerHTML = `<div class="pad"><h3 style="margin:0 0 10px;font:650 15px var(--display)">Imports</h3><table class="grid"><thead><tr><th>#</th><th>File</th><th>When</th><th>By</th><th>Result</th><th>Change summary</th></tr></thead><tbody>${r.imports.map(i => `<tr><td>${i.batch_id}</td><td>${esc(i.file_name)} <span class="tag">${i.file_format}</span></td><td>${fts(i.imported_at)}</td><td>${esc(i.imported_by)}</td><td>${chip(i.result === 'rejected' ? 'rejected' : 'applied', i.result)}</td><td class="muted">${esc(i.change_summary || '')}</td></tr>`).join('')}</tbody></table>
+  <h3 style="margin:22px 0 10px;font:650 15px var(--display)">Change log</h3><table class="grid"><thead><tr><th>When</th><th>Who</th><th>Object</th><th>Action</th><th>Detail</th><th>Reason</th></tr></thead><tbody>${r.log.map(l => `<tr><td>${fts(l.at)}</td><td>${esc(l.actor || '–')}</td><td><span class="tag">${esc(l.object_type.replace('tax_', '').replace(/_/g, ' '))}</span> ${esc(l.object_id)}</td><td>${esc(l.action)}</td><td>${esc(brief(l))}</td><td class="muted">${esc(l.reason || '')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* =================== reports =================== */
+let REP = null;
+async function loadReports() {
+  $$('#repSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === ui.repKind));
+  const k = ui.repKind;
+  if (!$('#rTo').value) $('#rTo').value = asOf();
+  if (!$('#rFrom').value) { const p = META.periods.find(p => asOf() >= p.start_date && asOf() <= p.end_date); $('#rFrom').value = p ? p.start_date : asOf().slice(0, 8) + '01'; }
+  $('#rFrom').hidden = $('#rFromL').hidden = k !== 'pl';
+  $('#rTo').disabled = k === 'tax';
+  const qs = k === 'tb' ? 'date=' + $('#rTo').value : k === 'pl' ? `from=${$('#rFrom').value}&to=${$('#rTo').value}` : k === 'bs' ? 'to=' + $('#rTo').value : '';
+  REP = await api(`reports/${k}?${qs}`);
+  const co = esc(META.company.name_en);
+  if (k === 'tb') {
+    const d = REP.rows.reduce((a, r) => a + Number(r.dr_balance), 0), c = REP.rows.reduce((a, r) => a + Number(r.cr_balance), 0);
+    $('#rBody').innerHTML = `<div class="shead"><h2>Trial balance</h2><span class="muted">${co} · as of ${fdate(REP.date)}</span><span class="sp"></span>${Math.abs(d - c) < .005 ? '<span class="chip ok">balanced</span>' : '<span class="chip bad">not balanced</span>'}</div><table class="grid"><thead><tr><th>Account</th><th>Name</th><th>Type</th><th class="r">Total debit</th><th class="r">Total credit</th><th class="r">Debit balance</th><th class="r">Credit balance</th></tr></thead><tbody>${REP.rows.map(r => `<tr><td class="code">${r.account_code}</td><td>${esc(r.name_en)} <span class="th2">${esc(r.name_th || '')}</span></td><td><span class="tag">${r.account_type}</span></td><td class="r">${amt(r.debit)}</td><td class="r">${amt(r.credit)}</td><td class="r">${amt(r.dr_balance)}</td><td class="r">${amt(r.cr_balance)}</td></tr>`).join('')}<tr class="tot"><td colspan="5">Total</td><td class="r">${money(d)}</td><td class="r">${money(c)}</td></tr></tbody></table>`;
+  } else if (k === 'pl' || k === 'bs') {
+    const groups = k === 'pl' ? [['revenue', 'Revenue'], ['expense', 'Expenses']] : [['asset', 'Assets'], ['liability', 'Liabilities'], ['equity', 'Equity']];
+    const sum = t => REP.rows.filter(r => r.account_type === t).reduce((a, r) => a + Number(r.amount), 0);
+    const assetSum = REP.rows.filter(r => r.account_type === 'asset').reduce((a, r) => a + Number(r.amount) * (r.normal_side === 'C' ? -1 : 1), 0);
+    let body = '';
+    for (const [t, l] of groups) {
+      const rs = REP.rows.filter(r => r.account_type === t);
+      const tot = t === 'asset' ? assetSum : sum(t);
+      body += `<tr class="sub"><td colspan="2">${l}</td><td></td></tr>` + rs.map(r => `<tr><td class="code" style="padding-left:22px">${r.account_code}</td><td>${esc(r.name_en)} <span class="th2">${esc(r.name_th || '')}</span></td><td class="r">${t === 'asset' && r.normal_side === 'C' ? '(' + money(r.amount) + ')' : money(r.amount)}</td></tr>`).join('') + `<tr><td></td><td><b>Total ${l.toLowerCase()}</b></td><td class="r"><b>${money(tot)}</b></td></tr>`;
+    }
+    const net = k === 'pl' ? sum('revenue') - sum('expense') : assetSum - sum('liability') - sum('equity');
+    $('#rBody').innerHTML = `<div class="shead"><h2>${k === 'pl' ? 'Profit &amp; loss' : 'Balance sheet'}</h2><span class="muted">${co} · ${k === 'pl' ? fdate(REP.from) + ' – ' + fdate(REP.to) : 'as of ' + fdate(REP.to)}</span><span class="sp"></span>${k === 'bs' ? (Math.abs(net) < .005 ? '<span class="chip ok">assets = liabilities + equity</span>' : `<span class="chip bad">difference ${money(net)}</span>`) : ''}</div><table class="grid" style="max-width:900px"><thead><tr><th style="width:110px">Account</th><th>Name</th><th class="r">Amount</th></tr></thead><tbody>${body}${k === 'pl' ? `<tr class="tot"><td></td><td>Net profit</td><td class="r" style="color:${net < 0 ? 'var(--danger)' : 'inherit'}">${money(net)}</td></tr>` : ''}</tbody></table>`;
+  } else {
+    $('#rBody').innerHTML = `<div class="shead"><h2>Tax summary by period</h2><span class="muted">${co}</span></div><table class="grid"><thead><tr><th>Period</th><th>Status</th><th class="r">Output VAT</th><th class="r">Input VAT</th><th class="r">VAT payable (PP30)</th><th class="r">Gross salary</th><th class="r">PND1</th><th class="r">Social security</th><th class="r">PND3/53 withheld</th><th class="r">Tax withheld by customers</th></tr></thead><tbody>${REP.rows.map(r => `<tr><td><b>${r.period}</b></td><td>${chip(r.status)}</td><td class="r">${amt(r.output_vat)}</td><td class="r">${amt(r.input_vat)}</td><td class="r"><b>${amt(r.vat_payable)}</b></td><td class="r">${amt(r.gross_salary)}</td><td class="r">${amt(r.pnd1)}</td><td class="r">${amt(r.sso)}</td><td class="r">${amt(r.pnd3_53)}</td><td class="r">${amt(r.wht_suffered)}</td></tr>`).join('')}</tbody></table><div class="pnote pad">Payroll figures include posted runs only. VAT payable is output VAT minus input VAT recorded in the period.</div>`;
+  }
+}
+function exportCsv() {
+  const t = $('#rBody table'); if (!t) return;
+  const rowsCsv = $$('tr', t).map(tr => $$('th,td', tr).map(c => '"' + c.innerText.replace(/"/g, '""').replace(/\n/g, ' ') + '"').join(','));
+  const blob = new Blob(['﻿' + rowsCsv.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `sERP_${ui.repKind}_${$('#rTo').value}.csv`; a.click();
+}
+
+/* =================== navigation =================== */
+const LOADERS = { dash: loadDash, journal: loadJournal, docs: loadDocs, payroll: loadPayroll, tax: loadTax, reports: loadReports };
+function setTab(t) {
+  ui.tab = t; save();
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  $$('.view').forEach(v => v.hidden = v.id !== 'v-' + t);
+  $$('.pop').forEach(p => p.hidden = true);
+  run(null, LOADERS[t]);
+}
+async function refreshHero() {
+  try { DASH = await api('dashboard?as_of=' + asOf()); renderHero(); if (ui.tab === 'dash') renderDash(); } catch (e) { fail(e); }
+  try { if (!TAXCACHE) { TAXCACHE = await api('tax/rules?date=' + asOf()); } renderRing(); } catch (e) { }
+}
+async function refresh() {
+  try { META = await api('meta'); } catch (e) { return fail(e); }
+  TAXCACHE = null; await refreshHero();
+  if (ui.tab !== 'dash') setTab(ui.tab);
+}
+async function boot() {
+  applyTheme();
+  setPill('busy', 'Connecting…');
+  let st;
+  try { st = STATUS = await api('status'); } catch (e) { setPill('err', 'Server not running'); return toast(e.message, 'err'); }
+  if (!st.configured || st.db !== 'ok' || !st.schema) { setPill('err', st.db === 'error' ? 'Database error' : 'Not set up'); return showSetup(st); }
+  setPill('ok', st.dsn?.match(/dbname=(\S+)/)?.[1] || 'PostgreSQL');
+  $('#dbPill').title = `${st.db_version}\n${st.dsn}`;
+  META = await api('meta').catch(fail); if (!META) return;
+  $('#userSel').innerHTML = META.users.filter(u => !u.roles.includes('system')).map(u => `<option value="${u.username}" title="${esc(u.roles.join(', '))}">${esc(u.full_name.replace(/ \(.*\)$/, ''))} · ${esc(u.roles[0].replace('_', ' '))}</option>`).join('');
+  if (!META.users.find(u => u.username === ui.user)) ui.user = 'napat';
+  $('#userSel').value = ui.user;
+  $('#asOf').value = asOf();
+  await refreshHero();
+  setTab(ui.tab);
+}
+
+/* =================== events =================== */
+$$('#tabs button').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+$('#bTheme').onclick = openTheme; $('#bHelp').onclick = openHelp; $('#bSet').onclick = openSettings;
+$('#bRefresh').onclick = () => refresh();
+$('#dbPill').onclick = () => STATUS && showSetup(STATUS, true);
+$('#userSel').onchange = () => { ui.user = $('#userSel').value; save(); toast('Now acting as ' + $('#userSel').selectedOptions[0].text.split(' · ')[0]); if (ui.tab === 'tax' || ui.tab === 'dash') setTab(ui.tab); };
+$('#asOf').onchange = () => { ui.asOf = $('#asOf').value || null; save(); $('#rTo').value = ''; $('#rFrom').value = ''; refresh(); };
+['jPeriod', 'jType', 'jStatus'].forEach(id => $('#' + id).onchange = () => run(null, loadJournal));
+let st0; $('#jSearch').oninput = () => { clearTimeout(st0); st0 = setTimeout(() => run(null, loadJournal), 250); };
+$('#bNewJe').onclick = newJe;
+$$('#docSeg button').forEach(b => b.onclick = () => { ui.docKind = b.dataset.k; save(); run(null, loadDocs); });
+$('#dFilter').onchange = () => run(null, loadDocs);
+$('#bNewDoc').onclick = () => { if (ui.docKind === 'PAY') { toast('Open an unpaid invoice or bill and choose Receive / Pay'); ui.docKind = 'AR'; $('#dFilter').value = 'open'; save(); run(null, loadDocs); } else newInvoice(ui.docKind); };
+$$('#paySeg button').forEach(b => b.onclick = () => { ui.payKind = b.dataset.k; save(); run(null, loadPayroll); });
+$('#bNewRun').onclick = newRun;
+$$('#taxSeg button').forEach(b => b.onclick = () => { ui.taxKind = b.dataset.k; save(); run(null, loadTax); });
+$$('#repSeg button').forEach(b => b.onclick = () => { ui.repKind = b.dataset.k; save(); run(null, loadReports); });
+['rFrom', 'rTo'].forEach(id => $('#' + id).onchange = () => run(null, loadReports));
+$('#bPrint').onclick = () => window.print();
+$('#bCsv').onclick = exportCsv;
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { $$('.pop').forEach(p => p.hidden = true); }
+  if (e.key === 'F1') { e.preventDefault(); openHelp(); }
+  if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && e.code === 'KeyR')) { e.preventDefault(); refresh(); }
+  if (e.altKey && !e.ctrlKey && /^Digit[1-6]$/.test(e.code)) { e.preventDefault(); setTab(['dash', 'journal', 'docs', 'payroll', 'tax', 'reports'][+e.code.slice(5) - 1]); }
+  if (e.altKey && !e.ctrlKey && e.code === 'KeyN' && !document.querySelector('.mback')) { e.preventDefault(); ({ journal: newJe, docs: () => ui.docKind !== 'PAY' && newInvoice(ui.docKind), payroll: newRun })[ui.tab]?.(); }
+});
+document.addEventListener('mousedown', e => { if (!e.target.closest('.pop') && !e.target.closest('#bTheme,#bHelp,#bSet')) $$('.pop').forEach(p => p.hidden = true); });
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="forest">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sERP 1.0 — Quick guide</title>
+<style>
+:root{
+  --font:"Segoe UI Variable Text","Segoe UI Variable","SF Pro Text","Inter","Segoe UI",system-ui,-apple-system,Roboto,"Noto Sans Thai",Helvetica,Arial,sans-serif;
+  --display:"Segoe UI Variable Display","SF Pro Display","Inter Display","Inter","Segoe UI",system-ui,-apple-system,"Noto Sans Thai",sans-serif;
+  --accent:#4f46e5;--accent-2:#7c3aed;--accent-soft:rgba(79,70,229,.09);--accent-line:rgba(79,70,229,.35);
+  --chrome:rgba(255,255,255,.78);--chrome-solid:#ffffff;--line:rgba(15,23,42,.07);--line-2:rgba(15,23,42,.13);
+  --text:#0f172a;--muted:#667085;--hover:rgba(15,23,42,.045);--field:#ffffff;
+  --canvas:#f3f4f9;--glow:rgba(124,58,237,.10);--hi:rgba(255,255,255,.9);
+  --shadow:0 1px 1px rgba(15,23,42,.04),0 10px 30px -8px rgba(30,27,75,.14);
+  --ok:#059669;--danger:#dc2626;--warn:#d97706;color-scheme:light;
+}
+[data-theme=dark]{--accent:#818cf8;--accent-2:#a78bfa;--accent-soft:rgba(129,140,248,.15);--accent-line:rgba(129,140,248,.45);--chrome:rgba(24,26,33,.80);--chrome-solid:#181a21;--line:rgba(255,255,255,.065);--line-2:rgba(255,255,255,.13);--text:#e8eaf0;--muted:#98a1b3;--hover:rgba(255,255,255,.055);--field:#11131a;--canvas:#0d0f14;--glow:rgba(129,140,248,.12);--hi:rgba(255,255,255,.06);--shadow:0 1px 1px rgba(0,0,0,.3),0 14px 36px -10px rgba(0,0,0,.6);--ok:#34d399;--danger:#f87171;--warn:#fbbf24;color-scheme:dark}
+[data-theme=starry]{--accent:#8cc8ff;--accent-2:#4f7fe0;--accent-soft:rgba(140,200,255,.14);--accent-line:rgba(140,200,255,.45);--chrome:rgba(12,24,58,.84);--chrome-solid:#0c1a3d;--line:rgba(160,190,255,.12);--line-2:rgba(160,190,255,.22);--text:#e8ecff;--muted:#9fb0d6;--hover:rgba(160,190,255,.08);--field:#0a1430;--canvas:#0a1530;--glow:rgba(140,200,255,.10);--hi:rgba(200,220,255,.07);--shadow:0 1px 1px rgba(0,0,0,.3),0 14px 36px -10px rgba(0,0,0,.6);--ok:#7dd3fc;--danger:#fca5a5;--warn:#f5d27a;color-scheme:dark;--canvas-tex:radial-gradient(1.3px 1.3px at 20% 30%,rgba(255,255,255,.55) 60%,transparent 100%) 0 0/83px 79px,radial-gradient(1.1px 1.1px at 65% 70%,rgba(200,225,255,.45) 60%,transparent 100%) 0 0/127px 109px,radial-gradient(1px 1px at 40% 55%,rgba(200,215,255,.42) 60%,transparent 100%) 0 0/61px 67px}
+[data-theme=forest]{--accent:#2f6b3a;--accent-2:#5c8f3c;--accent-soft:rgba(47,107,58,.10);--accent-line:rgba(47,107,58,.4);--chrome:rgba(250,248,240,.86);--chrome-solid:#f8f5ec;--line:rgba(47,90,54,.11);--line-2:rgba(47,90,54,.22);--text:#1f3324;--muted:#5f7363;--hover:rgba(47,90,54,.06);--field:#fffdf6;--canvas:#e3ebdc;--glow:rgba(92,143,60,.12);--hi:rgba(255,255,250,.9);--shadow:0 1px 1px rgba(31,51,36,.05),0 10px 30px -8px rgba(31,51,36,.18);--ok:#2f6b3a;--danger:#b4413a;--warn:#c07a2c;color-scheme:light;--canvas-tex:radial-gradient(ellipse 50% 40% at 95% 100%,rgba(47,107,58,.14),transparent 70%)}
+[data-theme=burning]{--accent:#ff7a33;--accent-2:#ee0979;--accent-soft:rgba(255,122,51,.14);--accent-line:rgba(255,122,51,.45);--chrome:rgba(28,18,14,.86);--chrome-solid:#1c120e;--line:rgba(255,140,80,.12);--line-2:rgba(255,140,80,.22);--text:#f7e9df;--muted:#c4a796;--hover:rgba(255,140,80,.075);--field:#140c09;--canvas:#150e0b;--glow:rgba(255,106,0,.12);--hi:rgba(255,200,160,.06);--shadow:0 1px 1px rgba(0,0,0,.35),0 14px 36px -10px rgba(0,0,0,.65);--ok:#fbbf24;--danger:#fb7185;--warn:#ffd166;color-scheme:dark;--canvas-tex:radial-gradient(ellipse 70% 45% at 50% 115%,rgba(255,106,0,.22),transparent 60%)}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;font:14px/1.6 var(--font);color:var(--text);-webkit-font-smoothing:antialiased;background:radial-gradient(1100px 420px at 8% -8%,var(--glow),transparent 62%),radial-gradient(900px 380px at 100% 0%,var(--glow),transparent 60%),var(--canvas-tex,none),var(--canvas);background-attachment:fixed;min-height:100vh}
+a{color:var(--accent)}
+.glass{background:var(--chrome);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--hi),var(--shadow)}
+.solid{background:var(--chrome-solid);border:1px solid var(--line);box-shadow:var(--shadow)}
+header{position:sticky;top:14px;z-index:10;margin:14px;height:56px;border-radius:18px;display:flex;align-items:center;gap:12px;padding:0 12px}
+.brand{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.brand svg{width:34px;height:34px;filter:drop-shadow(0 4px 10px rgba(10,23,54,.35))}
+.brand b{font:650 15px/1 var(--display);letter-spacing:-.015em}
+.brand small{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+.spacer{flex:1}
+.themes{display:flex;gap:6px;align-items:center}
+.themes span{font-size:12px;color:var(--muted);margin-right:4px}
+.th{width:24px;height:24px;border-radius:50%;border:2px solid var(--line-2);cursor:pointer;padding:0}
+.th.on{border-color:var(--text);box-shadow:0 0 0 3px var(--accent-soft)}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;max-width:1240px;margin:0 auto;padding:4px 14px 40px}
+nav{position:sticky;top:86px;align-self:start;border-radius:16px;padding:10px;max-height:calc(100vh - 100px);overflow:auto}
+nav a{display:flex;gap:9px;align-items:center;padding:7px 10px;border-radius:9px;color:var(--text);text-decoration:none;font-weight:550;font-size:13px}
+nav a:hover{background:var(--hover)}
+nav a.on{background:var(--accent-soft);color:var(--accent)}
+nav a i{font-style:normal;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--hover);color:var(--muted);flex:none}
+nav a.on i{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
+nav .sub{padding-left:39px;font-weight:500;font-size:12.5px;color:var(--muted)}
+main{min-width:0}
+section{border-radius:20px;padding:26px 30px;margin-bottom:18px}
+h1{font:700 32px/1.15 var(--display);letter-spacing:-.025em;margin:0 0 8px}
+h2{font:650 22px/1.25 var(--display);letter-spacing:-.02em;margin:0 0 6px;display:flex;align-items:center;gap:12px}
+h2 .n{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:15px;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));flex:none}
+h3{font:650 16px var(--display);margin:26px 0 8px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+h3 .k{font:600 11px var(--font);padding:2px 8px;border-radius:6px;background:var(--hover);color:var(--muted)}
+.lead{color:var(--muted);font-size:15px;margin:0 0 16px;max-width:760px}
+p{max-width:780px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.card{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--chrome-solid);text-decoration:none;color:var(--text);transition:border-color .14s,transform .14s}
+.card:hover{border-color:var(--accent-line);transform:translateY(-1px)}
+.card b{display:block;font:650 14px var(--display);margin:6px 0 2px}
+.card span{font-size:12.5px;color:var(--muted)}
+.card em{font-style:normal;font:700 12px var(--font);color:var(--accent)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:22px;align-items:start;margin-top:8px}
+.split.rev{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:8px 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 12px 40px;min-height:30px}
+ol.steps>li::before{content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--font);color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line)}
+ol.steps>li:not(:last-child)::after{content:"";position:absolute;left:12.5px;top:30px;bottom:2px;width:1px;background:var(--line-2)}
+ol.steps b{font-weight:650}
+.ui{display:inline-block;font-weight:600;font-size:12.5px;padding:0 7px;border-radius:7px;border:1px solid var(--line-2);background:var(--field);white-space:nowrap;line-height:20px}
+.ui.p{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+kbd{font:600 11.5px ui-monospace,"Cascadia Code",Consolas,monospace;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:6px;padding:1px 6px;background:var(--field);white-space:nowrap}
+code{font:12.5px ui-monospace,"Cascadia Code",Consolas,monospace;background:var(--hover);padding:1px 6px;border-radius:6px}
+figure{margin:0}
+figure img{display:block;width:100%;border-radius:12px;border:1px solid var(--line-2);box-shadow:var(--shadow);cursor:zoom-in}
+figcaption{font-size:12px;color:var(--muted);margin-top:6px}
+.note{border-radius:12px;padding:10px 14px;margin:12px 0;font-size:13px;background:var(--accent-soft);border:1px solid var(--accent-line);max-width:780px}
+.note.warn{background:color-mix(in srgb,var(--warn) 12%,transparent);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.note b{font-weight:650}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px;margin:10px 0}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:9px 12px;border-bottom:1px solid var(--line-2)}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.tbl{border:1px solid var(--line);border-radius:14px;background:var(--chrome-solid);overflow:hidden}
+.flow{display:flex;align-items:stretch;gap:0;margin:16px 0 6px;flex-wrap:wrap}
+.flow .st{flex:1;min-width:120px;border:1px solid var(--line-2);background:var(--chrome-solid);border-radius:12px;padding:10px 12px;position:relative}
+.flow .st b{display:block;font:650 13px var(--display)}
+.flow .st span{font-size:11.5px;color:var(--muted)}
+.flow .st small{display:inline-block;font:700 10.5px var(--font);color:var(--accent);margin-bottom:2px}
+.flow .ar{width:26px;display:grid;place-items:center;color:var(--muted);flex:none}
+.flow .st.live{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--chrome-solid))}
+.flow .st.who{border-style:dashed}
+.chip{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:99px;font-weight:600;font-size:11.5px;white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.chip.acc{background:var(--accent-soft);color:var(--accent)}
+.chip.mid{background:var(--hover);color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lb{position:fixed;inset:0;z-index:50;background:rgba(8,10,20,.72);display:grid;place-items:center;padding:24px;cursor:zoom-out;backdrop-filter:blur(3px)}
+.lb img{max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:10px 0 0}
+@media (max-width:980px){.wrap{grid-template-columns:1fr}nav{display:none}.split,.split.rev,.grid2{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}section{padding:20px}}
+@media (max-width:560px){.cards{grid-template-columns:1fr}.themes span{display:none}header{margin:8px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="glass">
+  <div class="brand"><svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="erBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14295a"/><stop offset=".55" stop-color="#0a1736"/><stop offset="1" stop-color="#050c1e"/></linearGradient><linearGradient id="erSheet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b4c5e3"/><stop offset="1" stop-color="#8098c6"/></linearGradient><linearGradient id="erBar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3b5fa6"/><stop offset="1" stop-color="#5b7fc2"/></linearGradient><linearGradient id="erS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6eefc"/><stop offset="1" stop-color="#9fb4dc"/></linearGradient><radialGradient id="erGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#7dd3fc" stop-opacity=".55"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/></radialGradient></defs><rect x="4" y="4" width="120" height="120" rx="28" fill="url(#erBg)"/><rect x="20" y="24" width="66" height="78" rx="9" fill="#0a1736" stroke="url(#erSheet)" stroke-width="3"/><rect x="20" y="24" width="66" height="15" rx="9" fill="url(#erSheet)"/><rect x="20" y="31" width="66" height="8" fill="url(#erSheet)"/><path d="M53 41v57" stroke="#b4c5e3" stroke-opacity=".35" stroke-width="2"/><rect x="27" y="47" width="20" height="6" rx="3" fill="url(#erBar)"/><rect x="27" y="59" width="15" height="6" rx="3" fill="url(#erBar)"/><rect x="27" y="71" width="19" height="6" rx="3" fill="url(#erBar)" opacity=".7"/><rect x="60" y="53" width="19" height="6" rx="3" fill="#5b7fc2"/><rect x="60" y="65" width="14" height="6" rx="3" fill="#5b7fc2"/><rect x="60" y="77" width="18" height="6" rx="3" fill="#5b7fc2" opacity=".7"/><path d="M27 89h20M60 89h20M27 93h20M60 93h20" stroke="#b4c5e3" stroke-width="2.4" stroke-linecap="round"/><circle cx="100" cy="36" r="17" fill="url(#erGlow)"/><circle cx="100" cy="36" r="9.5" fill="#0a1736" stroke="#b4c5e3" stroke-width="3.5"/><path d="M95.6 36.3l3.1 3 5.5-6.2" fill="none" stroke="#7dd3fc" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path transform="translate(102 103) scale(.86) translate(-101 -102)" d="M110.5 92.5c-1.8-3.6-5.2-5.5-9.6-5.5-5.4 0-9.2 2.9-9.2 7 0 9.4 19.8 5.2 19.8 14.6 0 4.5-4.3 7.4-10.3 7.4-5.1 0-8.8-2-10.7-5.8" fill="none" stroke="url(#erS)" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span><b>sERP · Quick guide</b><small>simply handle IT ERP 1.0</small></span></div>
+  <div class="spacer"></div>
+  <div class="themes" role="group" aria-label="Theme"><span>Theme</span>
+    <button class="th" data-th="basic" title="Basic" style="background:linear-gradient(135deg,#f3f4f9 50%,#4f46e5 50%)"></button>
+    <button class="th" data-th="dark" title="Dark" style="background:linear-gradient(135deg,#0d0f14 50%,#818cf8 50%)"></button>
+    <button class="th" data-th="starry" title="Starry Night" style="background:linear-gradient(135deg,#0a1530 50%,#8cc8ff 50%)"></button>
+    <button class="th" data-th="forest" title="Forest" style="background:linear-gradient(135deg,#e3ebdc 50%,#2f6b3a 50%)"></button>
+    <button class="th" data-th="burning" title="Burning" style="background:linear-gradient(135deg,#150e0b 50%,#ff7a33 50%)"></button>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="glass" id="toc">
+  <a href="#start"><i>★</i>Overview</a>
+  <a href="#need"><i>1</i>Before you start</a>
+  <a href="#pg"><i>2</i>Install PostgreSQL</a>
+  <a href="#install"><i>3</i>Install &amp; first launch</a>
+  <a href="#screen"><i>4</i>The screen</a>
+  <a href="#tasks"><i>5</i>Everyday tasks</a>
+  <a class="sub" href="#t-invoice">Sales invoice</a>
+  <a class="sub" href="#t-pay">Payments</a>
+  <a class="sub" href="#t-journal">Journal entry</a>
+  <a class="sub" href="#t-payroll">Monthly payroll</a>
+  <a class="sub" href="#t-profile">Tax profiles</a>
+  <a class="sub" href="#t-close">Month end</a>
+  <a href="#rules"><i>6</i>Update tax rules</a>
+  <a href="#trouble"><i>7</i>Troubleshooting</a>
+</nav>
+
+<main>
+<section class="glass" id="start">
+  <h1>sERP in 10 minutes</h1>
+  <p class="lead">Install sERP, open the sample company, and do the four jobs you'll repeat every month: invoices, payments, payroll and tax rule updates. VAT, withholding tax, social security and salary tax are always calculated for you from the approved tax rules.</p>
+  <div class="cards">
+    <a class="card" href="#pg"><em>STEP 1</em><b>Install</b><span>PostgreSQL once, then download, unzip and double-click <code>sERP.bat</code></span></a>
+    <a class="card" href="#tasks"><em>STEP 2</em><b>Daily work</b><span>Invoices, payments, journal entries</span></a>
+    <a class="card" href="#t-payroll"><em>STEP 3</em><b>Payroll</b><span>Draft, adjust, post — tax is automatic</span></a>
+    <a class="card" href="#rules"><em>STEP 4</em><b>Tax rules</b><span>Export, update with Claude, import, approve</span></a>
+  </div>
+</section>
+
+<section class="glass" id="need">
+  <h2><span class="n">1</span>Before you start</h2>
+  <p class="lead">You only install PostgreSQL yourself — <code>sERP.bat</code> takes care of Python. Or use Docker for both.</p>
+  <div class="tbl"><table>
+    <tr><th>What</th><th>Where to get it</th><th>Note</th></tr>
+    <tr><td><b>sERP.zip</b></td><td><a href="https://github.com/warisr040/sERP/releases/latest/download/sERP.zip">Download from GitHub</a> · <a href="https://github.com/warisr040/sERP">source</a></td><td>Always the latest version. Unzip into any folder, for example inside your project folder</td></tr>
+    <tr><td><b>Python 3.10 or newer</b> <span class="chip ok">automatic</span></td><td>Nothing to do</td><td><code>sERP.bat</code> finds Python by itself, or installs Python 3.12 for your user with <code>winget</code>. No "Add to PATH" needed. Manual install: <a href="https://www.python.org/downloads/">python.org</a></td></tr>
+    <tr><td><b>PostgreSQL 16 or newer</b></td><td><a href="https://www.postgresql.org/download/windows/">postgresql.org/download/windows</a></td><td>Step by step in <a href="#pg">section 2</a>. Microsoft SQL Server does <b>not</b> replace it</td></tr>
+    <tr><td><b>Docker Desktop</b> <span class="chip mid">alternative</span></td><td><a href="https://www.docker.com/products/docker-desktop/">docker.com</a></td><td>Runs PostgreSQL and sERP together — no Python or PostgreSQL install needed</td></tr>
+  </table></div>
+  <div class="note">Microsoft Edge is already part of Windows 10/11. sERP uses it to open in its own app window.</div>
+</section>
+
+<section class="glass" id="pg">
+  <h2><span class="n">2</span>Install PostgreSQL <span style="font:500 13px var(--font);color:var(--muted)">one time · about 5 minutes</span></h2>
+  <p class="lead">sERP keeps the books in PostgreSQL. Without it, "Create sample database" ends with <b>connection timeout expired</b>.</p>
+  <div class="split">
+    <div>
+      <ol class="steps">
+        <li>Open <a href="https://www.postgresql.org/download/windows/">postgresql.org/download/windows</a> and click <b>Download the installer</b> (it comes from EDB).</li>
+        <li>Pick the newest version (16 or newer) for <b>Windows x86-64</b> and run the downloaded file. Allow it to make changes.</li>
+        <li>Click <span class="ui">Next</span> through the pages, keeping the defaults — the table shows what to look at.</li>
+        <li>On <b>Password</b>, type a password for the <code>postgres</code> user twice. <b>Write it down</b> — sERP needs it.</li>
+        <li>On <b>Port</b>, keep <code>5432</code>.</li>
+        <li>On the last page, <b>untick</b> "Launch Stack Builder at exit" and click <span class="ui">Finish</span>.</li>
+        <li>Check it runs: press <kbd>Win</kbd>+<kbd>R</kbd>, type <code>services.msc</code>, press Enter. Find <b>postgresql-x64-NN</b> (NN = version): Status <b>Running</b>, Startup type <b>Automatic</b>.</li>
+      </ol>
+      <div class="note">That's all. PostgreSQL now starts with Windows. Go on to <a href="#install">section 3</a> and use host <code>localhost</code>, port <code>5432</code>, user <code>postgres</code> and your password.</div>
+    </div>
+    <div class="tbl"><table>
+      <tr><th>Installer page</th><th>What to do</th></tr>
+      <tr><td>Installation Directory</td><td>Keep the default</td></tr>
+      <tr><td>Select Components</td><td>Keep all ticked (Server, pgAdmin 4, Command Line Tools); Stack Builder is optional</td></tr>
+      <tr><td>Data Directory</td><td>Keep the default</td></tr>
+      <tr><td><b>Password</b></td><td><b>Choose and write down</b> — this is the sERP database password</td></tr>
+      <tr><td><b>Port</b></td><td><code>5432</code> (if it suggests 5433, another PostgreSQL exists — use that number in sERP)</td></tr>
+      <tr><td>Advanced Options (locale)</td><td>Keep <i>[Default locale]</i></td></tr>
+      <tr><td>Summary / Ready to Install</td><td><span class="ui">Next</span>, wait 1–3 minutes</td></tr>
+      <tr><td>Completing</td><td>Untick Stack Builder → <span class="ui">Finish</span></td></tr>
+    </table></div>
+  </div>
+  <h3>Connection timeout? Check in this order</h3>
+  <ol class="steps">
+    <li><b>Is PostgreSQL installed?</b> There should be a folder <code>C:\Program Files\PostgreSQL</code>. Microsoft SQL Server is a different database and does not work with sERP.</li>
+    <li><b>Is the service running?</b> <code>services.msc</code> → <b>postgresql-x64-NN</b> → <span class="ui">Start</span>; set Startup type to Automatic.</li>
+    <li><b>Right port?</b> Default 5432; a second install often uses 5433. The port is in the installer summary and in <code>postgresql.conf</code>.</li>
+    <li><b>Host:</b> try <code>127.0.0.1</code> instead of <code>localhost</code>.</li>
+    <li><b>Firewall / antivirus</b> blocking the port — allow PostgreSQL in Windows Defender Firewall. For a database on another computer, it must also allow network connections (<code>listen_addresses</code>, <code>pg_hba.conf</code>).</li>
+  </ol>
+  <div class="note">sERP shows these tips itself under the error message on the welcome screen.</div>
+</section>
+
+<section class="glass" id="install">
+  <h2><span class="n">3</span>Install &amp; first launch</h2>
+  <p class="lead">The first start takes about a minute. After that, sERP opens in a few seconds.</p>
+  <div class="split">
+    <ol class="steps">
+      <li><a href="https://github.com/warisr040/sERP/releases/latest/download/sERP.zip">Download <b>sERP.zip</b></a> from GitHub and unzip it.</li>
+      <li>Double-click <b>sERP.bat</b>. A black window appears and prepares sERP — <b>only the first time</b>. If Python is missing it installs it for you (allow it if Windows asks).</li>
+      <li>The sERP window opens with <b>Welcome to sERP</b>.</li>
+      <li>Fill in the database: Host <code>localhost</code>, Port <code>5432</code>, Database <code>serp</code>, User <code>postgres</code>, and your password.</li>
+      <li>Click <span class="ui">Test connection</span>. "Database 'serp' does not exist yet" is fine.</li>
+      <li>Click <span class="ui p">Create sample database</span>. In a few seconds you see the dashboard of <b>Simply Handle IT Demo Co., Ltd.</b></li>
+      <li>Next time just double-click <b>sERP.bat</b>. To stop sERP, close the black window.</li>
+    </ol>
+    <figure><img src="img/setup.jpg" alt="Welcome to sERP setup screen with host, port, database, user and password fields" loading="lazy"><figcaption>The first-run screen. Settings are saved in <code>serp.config.json</code>.</figcaption></figure>
+  </div>
+  <h3>With Docker instead <span class="k">optional</span></h3>
+  <ol class="steps">
+    <li>Open <code>docker-compose.yml</code> and change <code>change-me-please</code> to your own password (twice).</li>
+    <li>In the sERP folder run <code>docker compose up -d</code>.</li>
+    <li>Open <a href="http://127.0.0.1:47394">http://127.0.0.1:47394</a>. The sample company is loaded automatically.</li>
+  </ol>
+</section>
+
+<section class="glass" id="screen">
+  <h2><span class="n">4</span>The screen at a glance</h2>
+  <p class="lead">Six views across the top; the company card below always shows cash, receivables, payables, profit and the health of the tax rules.</p>
+  <figure><img src="img/dashboard.jpg" alt="sERP dashboard with KPIs, profit, receivables, tax to pay, monthly chart and items waiting" loading="lazy"><figcaption>Dashboard — the tax rules ring shows how many rule test cases pass.</figcaption></figure>
+  <div class="grid2" style="margin-top:16px">
+    <div class="tbl"><table>
+      <tr><th>Control</th><th>What it does</th></tr>
+      <tr><td><span class="ui">As of</span></td><td>Every view shows figures as of this date</td></tr>
+      <tr><td><span class="ui">Acting as</span></td><td>Who is making changes — approvals depend on it</td></tr>
+      <tr><td><span class="ui">● serp</span></td><td>Database status; click to change the connection</td></tr>
+      <tr><td><span class="ui">⚙</span></td><td>Settings: accounting periods (close / reopen / add month)</td></tr>
+      <tr><td><span class="ui">🎨</span></td><td>Theme: Basic, Dark, Starry Night, Forest, Burning</td></tr>
+    </table></div>
+    <div class="tbl"><table>
+      <tr><th>Shortcut</th><th>Action</th></tr>
+      <tr><td><kbd>Alt</kbd> + <kbd>1</kbd>…<kbd>6</kbd></td><td>Switch view</td></tr>
+      <tr><td><kbd>Alt</kbd> + <kbd>N</kbd></td><td>New entry / invoice / payroll run</td></tr>
+      <tr><td><kbd>F5</kbd></td><td>Reload data</td></tr>
+      <tr><td><kbd>F1</kbd></td><td>Help</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Close a dialog</td></tr>
+    </table></div>
+  </div>
+  <div class="note">Shortcuts use key positions, so they work the same on Thai, English, Chinese and Japanese keyboards.</div>
+</section>
+
+<section class="glass" id="tasks">
+  <h2><span class="n">5</span>Everyday tasks</h2>
+  <p class="lead">Each task posts its own journal entry. You never type VAT, withholding, social security or salary tax — sERP takes them from the approved rules for the document date.</p>
+
+  <h3 id="t-invoice">Create a sales invoice <span class="k">Sales &amp; purchases</span></h3>
+  <div class="split">
+    <ol class="steps">
+      <li>Open <b>Sales &amp; purchases</b> → <span class="ui">Sales invoices</span> → <span class="ui p">New invoice</span>.</li>
+      <li>Pick the <b>customer</b> and the <b>date</b>. Leave Due date empty to use the customer's payment terms.</li>
+      <li><b>VAT</b> shows the rule in force, e.g. <i>Standard VAT · 7% (v2)</i>. Choose <i>No VAT</i> only when the seller is not VAT-registered.</li>
+      <li>Add lines: description, account, quantity, unit price. <span class="ui">Add line</span> for more.</li>
+      <li>Check the totals and click <span class="ui p">Create and post</span>.</li>
+    </ol>
+    <figure><img src="img/invoice.jpg" alt="New sales invoice dialog with customer, VAT rule and lines" loading="lazy"><figcaption>Purchase bills work the same under <span class="ui">Purchase bills</span> → <span class="ui p">New bill</span>.</figcaption></figure>
+  </div>
+
+  <h3 id="t-pay">Receive or make a payment <span class="k">withholding tax</span></h3>
+  <div class="split rev">
+    <figure><img src="img/payment.jpg" alt="Receive payment dialog showing tax withheld, cash received and amount left" loading="lazy"><figcaption>Service fee 3% on 80,000 before VAT = 2,400 withheld.</figcaption></figure>
+    <ol class="steps">
+      <li>Click an unpaid invoice or bill, then <span class="ui p">Receive payment</span> (or <span class="ui p">Pay bill</span>).</li>
+      <li>Set the <b>payment date</b> and the <b>amount</b> — a smaller amount records a partial payment.</li>
+      <li>Choose the <b>withholding tax</b> income type (service 3%, rent 5%, transport 1% …) or <i>None</i>.</li>
+      <li>Check the preview: tax withheld, cash, left to pay. Payments under 1,000 baht have no withholding.</li>
+      <li>Click <span class="ui p">Record payment</span>.</li>
+    </ol>
+  </div>
+
+  <h3 id="t-journal">Post a journal entry <span class="k">Journal</span></h3>
+  <div class="split">
+    <ol class="steps">
+      <li>Open <b>Journal</b> → <span class="ui p">New entry</span>.</li>
+      <li>Enter date, type and a description.</li>
+      <li>Add lines with an account and a debit <i>or</i> a credit.</li>
+      <li>When the bar turns green (<b>Balanced</b>), click <span class="ui p">Post entry</span> — or <span class="ui">Save as draft</span> to finish later.</li>
+      <li>Made a mistake on a posted entry? Open it and click <span class="ui">Reverse…</span>. Posted entries are never edited.</li>
+    </ol>
+    <figure><img src="img/journal.jpg" alt="New journal entry dialog with an unbalanced warning" loading="lazy"><figcaption>Post stays disabled until debit = credit.</figcaption></figure>
+  </div>
+
+  <h3 id="t-payroll">Run monthly payroll <span class="k">Payroll</span></h3>
+  <div class="split rev">
+    <div>
+      <figure><img src="img/payroll.jpg" alt="Payroll run with salary, overtime, commission, social security, salary tax and net pay" loading="lazy"></figure>
+      <figure style="margin-top:12px"><img src="img/payslip.jpg" alt="Payslip with the salary tax calculation explained" loading="lazy"><figcaption>Click an employee for the payslip and how the tax was worked out.</figcaption></figure>
+    </div>
+    <ol class="steps">
+      <li>Open <b>Payroll</b> → <span class="ui p">New payroll run</span>.</li>
+      <li>Check the <b>pay date</b> (last day of the month) and click <span class="ui p">Calculate draft</span>.</li>
+      <li>Type <b>overtime, commission, allowance</b> and <b>other deductions</b> in the white cells.</li>
+      <li>Click <span class="ui">Recalculate</span>. Social security and salary tax (PND1) update from the rules.</li>
+      <li>Check rows marked <span class="chip" style="background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)">default</span> — that employee has no tax profile yet (see below).</li>
+      <li>Click <span class="ui p">Post payroll</span> and confirm. The payroll journal entry is created and the run is locked.</li>
+    </ol>
+  </div>
+
+  <h3 id="t-profile">Keep employee tax profiles up to date</h3>
+  <div class="split">
+    <ol class="steps">
+      <li><b>Payroll</b> → <span class="ui">Employees &amp; tax profiles</span>.</li>
+      <li>Click <span class="ui">Edit</span> on an employee.</li>
+      <li>Tick or fill the allowances: spouse without income, children, parents, life insurance premium.</li>
+      <li>Click <span class="ui p">Save and approve</span> (needs the payroll or tax admin role). The next payroll run uses it for the remaining months.</li>
+    </ol>
+    <figure><img src="img/emps.jpg" alt="Employees and tax profiles table" loading="lazy"><figcaption>New allowance types added to the tax rules appear here as columns automatically.</figcaption></figure>
+  </div>
+
+  <h3 id="t-close">Month end</h3>
+  <div class="split rev">
+    <figure><img src="img/taxsum.jpg" alt="Tax summary report by period" loading="lazy"><figcaption>Reports → Tax summary: VAT, PND1, PND3/53 and social security per month.</figcaption></figure>
+    <ol class="steps">
+      <li>Post the month's payroll and all invoices, bills and payments.</li>
+      <li><b>Reports</b> → <span class="ui">Tax summary</span>: amounts for PP30, PND1, PND3/53 and social security.</li>
+      <li>Record the tax payments with <b>Journal → New entry</b> (debit the payable, credit the bank).</li>
+      <li>Check <span class="ui">Trial balance</span> shows <span class="chip ok">balanced</span>; use <span class="ui">CSV</span> for your accountant.</li>
+      <li><span class="ui">⚙</span> → <b>Accounting periods</b> → <span class="ui">Close</span> the month, then <span class="ui">Add next month</span> when needed.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="glass" id="rules">
+  <h2><span class="n">6</span>Update tax rules with Claude</h2>
+  <p class="lead">When a tax law changes, nobody edits code. The rules go out as a file, come back with a new <b>draft</b> version, and go live only after someone else approves them.</p>
+  <div class="flow">
+    <div class="st"><small>1 · YOU</small><b>Export</b><span>JSON or Excel</span></div><div class="ar">→</div>
+    <div class="st who"><small>2 · CLAUDE</small><b>Update</b><span>new draft version + tests</span></div><div class="ar">→</div>
+    <div class="st"><small>3 · YOU</small><b>Import</b><span>check, then drafts</span></div><div class="ar">→</div>
+    <div class="st"><small>4 · YOU</small><b>Submit</b><span>tests must pass</span></div><div class="ar">→</div>
+    <div class="st who"><small>5 · APPROVER</small><b>Approve</b><span>another person</span></div><div class="ar">→</div>
+    <div class="st live"><small>6</small><b>Live</b><span>on its effective date</span></div>
+  </div>
+  <div class="split" style="margin-top:14px">
+    <ol class="steps">
+      <li><b>Tax rules</b> → <span class="ui">Import / export</span> → <span class="ui p">JSON</span> (or <span class="ui">Excel</span>).</li>
+      <li>Send the file to Claude with the law change and its source link. <span class="ui">Copy text</span> gives you a ready message.</li>
+      <li>Drop the returned file on <b>Import an updated file</b>. Read the errors and the list of changes.</li>
+      <li>Click <span class="ui p">Import as drafts</span>, then <span class="ui">Go to Approvals</span>.</li>
+      <li>Click <span class="ui p">Submit for approval</span>.</li>
+      <li>Change <span class="ui">Acting as</span> to an approver (finance manager or MD) and click <span class="ui">Approve</span>. VAT and withholding need 1 approval; salary tax and social security need 2.</li>
+    </ol>
+    <figure><img src="img/import.jpg" alt="Import preview listing a new VAT version and a new test case" loading="lazy"><figcaption>Nothing is applied until you click Import as drafts.</figcaption></figure>
+  </div>
+  <div class="grid2" style="margin-top:14px">
+    <figure><img src="img/approve.jpg" alt="Approvals view with Approve, Reject and Back-dating report buttons" loading="lazy"><figcaption>The maker cannot approve their own change.</figcaption></figure>
+    <figure><img src="img/rule.jpg" alt="Rule versions with the new version approved" loading="lazy"><figcaption>Versions in force are outlined in green.</figcaption></figure>
+  </div>
+  <div class="note warn"><b>Change dated in a closed month?</b> Depending on the policy (Tax rules → Policies) it is blocked, or needs a <span class="ui">Back-dating report</span> confirmed by a second person before approval. Posted payslips and invoices never change silently.</div>
+</section>
+
+<section class="glass" id="trouble">
+  <h2><span class="n">7</span>Troubleshooting</h2>
+  <div class="tbl"><table>
+    <tr><th style="width:38%">You see</th><th>Do this</th></tr>
+    <tr><td>"Could not install Python automatically"</td><td>Install Python 3.12 from <a href="https://www.python.org/downloads/">python.org</a> (default options, PATH not needed), then run <code>sERP.bat</code> again.</td></tr>
+    <tr><td>The black window runs but no app window opens</td><td>Open <a href="http://127.0.0.1:47394">http://127.0.0.1:47394</a> in Edge or Chrome.</td></tr>
+    <tr><td>"connection timeout expired" / "PostgreSQL did not answer"</td><td>PostgreSQL is not installed or not running — follow <a href="#pg">Install PostgreSQL</a> and its checklist.</td></tr>
+    <tr><td>"password authentication failed"</td><td>Wrong password for <code>postgres</code> — use the one chosen in the installer.</td></tr>
+    <tr><td>Red database pill / "Database unavailable"</td><td>Start PostgreSQL: Windows <b>Services</b> → <i>postgresql-x64-16</i> → Start. Wrong password? Click the pill and enter it again.</td></tr>
+    <tr><td>"Period 2026-10 is closed"</td><td>Use a date in an open month, or <span class="ui">⚙</span> → <span class="ui">Reopen</span> the period (finance manager / MD).</td></tr>
+    <tr><td>"No accounting period covers …"</td><td><span class="ui">⚙</span> → <span class="ui">Add next month</span>.</td></tr>
+    <tr><td>"Maker-checker: … cannot approve it"</td><td>Working as designed. Switch <span class="ui">Acting as</span> to a different approver.</td></tr>
+    <tr><td>"… a recalculation report must be confirmed first"</td><td>Approvals → <span class="ui">Back-dating report</span>, then a second person clicks <span class="ui">Confirm</span>; approve again.</td></tr>
+    <tr><td>Import error about <code>base_checksum</code></td><td>The file came from an older export. Export again and redo the change on the new file.</td></tr>
+    <tr><td>"… needs one of the roles"</td><td>The acting user lacks that role (e.g. only payroll users edit tax profiles). Switch user.</td></tr>
+    <tr><td>Want a fresh sample company</td><td>Click the database pill, tick <b>replace existing sERP data</b>, then <span class="ui p">Create sample database</span>. This deletes the current data.</td></tr>
+  </table></div>
+  <div class="note warn"><b>Version 1.0 has no passwords.</b> "Acting as" picks the user. Run sERP only on a trusted computer until sign-in is added.</div>
+  <div class="foot">sERP 1.0 · simply handle IT · Screenshots from the sample company, November 2026</div>
+</section>
+</main>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement, KEY = 'serp.guide.theme', saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
+  function setTheme(t) {
+    root.dataset.theme = t;
+    document.querySelectorAll('.th').forEach(function (b) { b.classList.toggle('on', b.dataset.th === t); });
+  }
+  setTheme(saved || 'forest');
+  document.querySelectorAll('.th').forEach(function (b) { b.addEventListener('click', function () { setTheme(b.dataset.th); try { localStorage.setItem(KEY, b.dataset.th); } catch (e) { } }); });
+
+  // highlight the section in view
+  var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  function spy() {
+    var y = window.scrollY + 120, cur = 0;
+    targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top + window.scrollY <= y) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('on', i === cur); });
+  }
+  window.addEventListener('scroll', spy, { passive: true }); spy();
+
+  // click a screenshot to enlarge
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('click', function () {
+      var lb = document.createElement('div'); lb.className = 'lb';
+      var big = document.createElement('img'); big.src = img.src; big.alt = img.alt; lb.appendChild(big);
+      function close() { lb.remove(); document.removeEventListener('keydown', esc); }
+      function esc(e) { if (e.key === 'Escape') close(); }
+      lb.addEventListener('click', close); document.addEventListener('keydown', esc);
+      document.body.appendChild(lb);
+    });
+  });
+})();
+</script>
+</body>
+</html>

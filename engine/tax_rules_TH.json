@@ -1,0 +1,941 @@
+{
+  "format": "simplyhandleit-erp-tax-rules",
+  "schema_version": "1.0.0",
+  "jurisdiction": "TH",
+  "company_id": null,
+  "exported_at": "2026-11-13T22:20:29+07:00",
+  "exported_by": "napat",
+  "base_checksum": "sha256:a4997dfce0e6da22d889988b13ed39217f29ed12b6207a474e057970d6012b25",
+  "updater_instructions": "You are updating a tax rule set. RULES: (1) Never edit or delete a version whose status is 'approved' - the only allowed edit is setting effective_to on an open-ended approved version to close it when a successor starts. (2) For any change, ADD a new version (next version number) with status 'draft', effective_from/effective_to, legal_reference and source_url. (3) Use only the rule_types and formula_functions listed in this file. Rates are fractions (0.07 = 7%). (4) Add or update test_cases so every changed rule has at least one case with the new expected value and the as_of date inside the new version. (5) Do not change base_checksum. (6) Fill change_summary: what changed, from when, and the sources. (7) No personal data.",
+  "change_summary": "",
+  "supported_rule_types": [
+    "flat_rate",
+    "rate_by_category",
+    "rate_with_cap",
+    "fixed_amount",
+    "bracket_table",
+    "threshold",
+    "formula"
+  ],
+  "formula_functions": [
+    "min(a,b,...)",
+    "max(a,b,...)",
+    "round(x, digits)",
+    "floor(x)",
+    "ceil(x)",
+    "rule('CODE','param')",
+    "bracket_tax('CODE', amount)",
+    "capped('CODE', base)"
+  ],
+  "jurisdiction_info": {
+    "code": "TH",
+    "name": "Thailand",
+    "base_currency": "THB",
+    "default_rounding": "half_up:0.01"
+  },
+  "rules": [
+    {
+      "code": "VAT_STD",
+      "name_en": "Standard VAT",
+      "name_th": "ภาษีมูลค่าเพิ่มอัตราทั่วไป",
+      "category": "VAT",
+      "rule_type": "flat_rate",
+      "is_mandatory": true,
+      "description": "Applied to the invoice subtotal. Statutory rate is 10%; reduced to 7% (incl. local tax) by Royal Decree, renewed yearly.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2025-10-01",
+          "effective_to": "2026-09-30",
+          "params": {
+            "rate": 0.07
+          },
+          "rounding": "half_up:0.01",
+          "legal_reference": "Revenue Code s.80; Royal Decree No. 799 (reduced rate to 30 Sep 2026)",
+          "source_url": null,
+          "notes": null
+        },
+        {
+          "version": 2,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2026-10-01",
+          "effective_to": "2027-09-30",
+          "params": {
+            "rate": 0.07
+          },
+          "rounding": "half_up:0.01",
+          "legal_reference": "Royal Decree No. 807 B.E. 2569 (reduced rate 1 Oct 2026 - 30 Sep 2027)",
+          "source_url": "https://www.forvismazars.com/th/en/insights/doing-business-in-thailand/tax/thailand-maintains-7-vat-rate-for-another-year",
+          "notes": "Review before 30 Sep 2027 - statutory 10% applies if no new decree."
+        }
+      ]
+    },
+    {
+      "code": "VAT_ZERO",
+      "name_en": "Zero-rated VAT (exports)",
+      "name_th": "ภาษีมูลค่าเพิ่มอัตราร้อยละ 0",
+      "category": "VAT",
+      "rule_type": "flat_rate",
+      "is_mandatory": false,
+      "description": "Export of goods and qualifying services.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "1992-01-01",
+          "effective_to": null,
+          "params": {
+            "rate": 0
+          },
+          "rounding": "half_up:0.01",
+          "legal_reference": "Revenue Code s.80/1",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "WHT_PND3_53",
+      "name_en": "Withholding tax on payments (PND3 individuals / PND53 companies)",
+      "name_th": "ภาษีหัก ณ ที่จ่าย ภ.ง.ด.3 / ภ.ง.ด.53",
+      "category": "WHT",
+      "rule_type": "rate_by_category",
+      "is_mandatory": true,
+      "description": "Rate depends on the income type of the payment. Base is the amount before VAT.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2020-01-01",
+          "effective_to": null,
+          "params": {
+            "categories": [
+              {
+                "key": "rent",
+                "label_en": "Rent",
+                "label_th": "ค่าเช่า",
+                "rate": 0.05
+              },
+              {
+                "key": "service",
+                "label_en": "Service fee",
+                "label_th": "ค่าบริการ",
+                "rate": 0.03
+              },
+              {
+                "key": "professional_fee",
+                "label_en": "Professional fee",
+                "label_th": "ค่าวิชาชีพอิสระ",
+                "rate": 0.03
+              },
+              {
+                "key": "hire_of_work",
+                "label_en": "Hire of work / contractor",
+                "label_th": "ค่าจ้างทำของ",
+                "rate": 0.03
+              },
+              {
+                "key": "advertising",
+                "label_en": "Advertising",
+                "label_th": "ค่าโฆษณา",
+                "rate": 0.02
+              },
+              {
+                "key": "transport",
+                "label_en": "Transport",
+                "label_th": "ค่าขนส่ง",
+                "rate": 0.01
+              },
+              {
+                "key": "prize",
+                "label_en": "Prizes / promotions",
+                "label_th": "รางวัล ส่วนลด",
+                "rate": 0.05
+              }
+            ]
+          },
+          "rounding": "half_up:0.01",
+          "legal_reference": "Revenue Code s.3 tredecim, s.50; Revenue Dept. Order Taw.Por. 4/2528",
+          "source_url": null,
+          "notes": "Start date simplified for the sample. Verify each rate before go-live."
+        }
+      ]
+    },
+    {
+      "code": "WHT_MIN_THRESHOLD",
+      "name_en": "Minimum payment subject to WHT",
+      "name_th": "ยอดขั้นต่ำที่ต้องหักภาษี ณ ที่จ่าย",
+      "category": "WHT",
+      "rule_type": "threshold",
+      "is_mandatory": false,
+      "description": "No withholding on a single payment below this amount (before VAT).",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2020-01-01",
+          "effective_to": null,
+          "params": {
+            "min_amount": 1000,
+            "applies_to": "single_payment"
+          },
+          "rounding": "none",
+          "legal_reference": "Revenue Dept. Order Taw.Por. 4/2528",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "SSO",
+      "name_en": "Social security contribution (Section 33)",
+      "name_th": "เงินสมทบประกันสังคม มาตรา 33",
+      "category": "SSO",
+      "rule_type": "rate_with_cap",
+      "is_mandatory": true,
+      "description": "Employee and employer each pay the same amount. Base = monthly wage clamped to [base_floor, base_cap].",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2020-01-01",
+          "effective_to": "2025-12-31",
+          "params": {
+            "rate": 0.05,
+            "base_floor": 1650,
+            "base_cap": 15000,
+            "max_amount": 750
+          },
+          "rounding": "half_up:1",
+          "legal_reference": "Social Security Act B.E. 2533 s.33, s.46",
+          "source_url": null,
+          "notes": "Start date simplified for the sample."
+        },
+        {
+          "version": 2,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2026-01-01",
+          "effective_to": "2028-12-31",
+          "params": {
+            "rate": 0.05,
+            "base_floor": 1650,
+            "base_cap": 17500,
+            "max_amount": 875
+          },
+          "rounding": "half_up:1",
+          "legal_reference": "Ministerial Regulation dated 11 Dec 2025 (Royal Gazette 12 Dec 2025) - phase 1",
+          "source_url": "https://kpmg.com/th/en/insights/2026/01/th-tax-news-flash-issue-157.html",
+          "notes": null
+        },
+        {
+          "version": 3,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2029-01-01",
+          "effective_to": "2031-12-31",
+          "params": {
+            "rate": 0.05,
+            "base_floor": 1650,
+            "base_cap": 20000,
+            "max_amount": 1000
+          },
+          "rounding": "half_up:1",
+          "legal_reference": "Ministerial Regulation dated 11 Dec 2025 - phase 2",
+          "source_url": "https://kpmg.com/th/en/insights/2026/01/th-tax-news-flash-issue-157.html",
+          "notes": null
+        },
+        {
+          "version": 4,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2032-01-01",
+          "effective_to": null,
+          "params": {
+            "rate": 0.05,
+            "base_floor": 1650,
+            "base_cap": 23000,
+            "max_amount": 1150
+          },
+          "rounding": "half_up:1",
+          "legal_reference": "Ministerial Regulation dated 11 Dec 2025 - phase 3",
+          "source_url": "https://kpmg.com/th/en/insights/2026/01/th-tax-news-flash-issue-157.html",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "PIT_BRACKETS",
+      "name_en": "Personal income tax brackets",
+      "name_th": "อัตราภาษีเงินได้บุคคลธรรมดา (ขั้นบันได)",
+      "category": "PIT",
+      "rule_type": "bracket_table",
+      "is_mandatory": true,
+      "description": "Progressive rates on annual net taxable income.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2017-01-01",
+          "effective_to": null,
+          "params": {
+            "basis": "progressive",
+            "brackets": [
+              {
+                "from": 0,
+                "to": 150000,
+                "rate": 0
+              },
+              {
+                "from": 150000,
+                "to": 300000,
+                "rate": 0.05
+              },
+              {
+                "from": 300000,
+                "to": 500000,
+                "rate": 0.1
+              },
+              {
+                "from": 500000,
+                "to": 750000,
+                "rate": 0.15
+              },
+              {
+                "from": 750000,
+                "to": 1000000,
+                "rate": 0.2
+              },
+              {
+                "from": 1000000,
+                "to": 2000000,
+                "rate": 0.25
+              },
+              {
+                "from": 2000000,
+                "to": 5000000,
+                "rate": 0.3
+              },
+              {
+                "from": 5000000,
+                "to": null,
+                "rate": 0.35
+              }
+            ]
+          },
+          "rounding": "half_up:0.01",
+          "legal_reference": "Revenue Code s.48(1), as amended by Revenue Code Amendment Act (No. 44) B.E. 2560",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "PIT_EXPENSE",
+      "name_en": "Employment income expense deduction",
+      "name_th": "ค่าใช้จ่ายเงินได้ 40(1)(2)",
+      "category": "PIT",
+      "rule_type": "rate_with_cap",
+      "is_mandatory": true,
+      "description": "50% of annual employment income, capped.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2017-01-01",
+          "effective_to": null,
+          "params": {
+            "rate": 0.5,
+            "max_amount": 100000
+          },
+          "rounding": "half_up:0.01",
+          "legal_reference": "Revenue Code s.42 bis",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "PIT_ALLOW_PERSONAL",
+      "name_en": "Personal allowance",
+      "name_th": "ค่าลดหย่อนส่วนตัว",
+      "category": "PIT",
+      "rule_type": "fixed_amount",
+      "is_mandatory": true,
+      "description": null,
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2017-01-01",
+          "effective_to": null,
+          "params": {
+            "amount": 60000,
+            "per": "person",
+            "input_field": null,
+            "input_kind": "flag",
+            "evidence_required": false
+          },
+          "rounding": "none",
+          "legal_reference": "Revenue Code s.47(1)(a)",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "PIT_ALLOW_SPOUSE",
+      "name_en": "Spouse allowance (spouse without income)",
+      "name_th": "ค่าลดหย่อนคู่สมรส",
+      "category": "PIT",
+      "rule_type": "fixed_amount",
+      "is_mandatory": false,
+      "description": null,
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2017-01-01",
+          "effective_to": null,
+          "params": {
+            "amount": 60000,
+            "per": "person",
+            "input_field": "spouse_no_income",
+            "input_kind": "flag",
+            "evidence_required": true
+          },
+          "rounding": "none",
+          "legal_reference": "Revenue Code s.47(1)(b)",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "PIT_ALLOW_CHILD",
+      "name_en": "Child allowance",
+      "name_th": "ค่าลดหย่อนบุตร",
+      "category": "PIT",
+      "rule_type": "fixed_amount",
+      "is_mandatory": false,
+      "description": "Simplified: flat amount per child. The higher amount for a 2nd+ child born from 2018 is a candidate for a new version.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2018-01-01",
+          "effective_to": null,
+          "params": {
+            "amount": 30000,
+            "per": "child",
+            "input_field": "children_count",
+            "input_kind": "count",
+            "max_count": null,
+            "evidence_required": true
+          },
+          "rounding": "none",
+          "legal_reference": "Revenue Code s.47(1)(c)",
+          "source_url": null,
+          "notes": "Verify current child-allowance rules before go-live."
+        }
+      ]
+    },
+    {
+      "code": "PIT_ALLOW_PARENT",
+      "name_en": "Parent care allowance",
+      "name_th": "ค่าลดหย่อนบิดามารดา",
+      "category": "PIT",
+      "rule_type": "fixed_amount",
+      "is_mandatory": false,
+      "description": "Per qualifying parent (own and spouse's parents), aged 60+ with low income.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2017-01-01",
+          "effective_to": null,
+          "params": {
+            "amount": 30000,
+            "per": "parent",
+            "input_field": "parents_count",
+            "input_kind": "count",
+            "max_count": 4,
+            "evidence_required": true
+          },
+          "rounding": "none",
+          "legal_reference": "Revenue Code s.47(1)(g)",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "PIT_ALLOW_LIFE_INS",
+      "name_en": "Life insurance premium allowance",
+      "name_th": "ค่าลดหย่อนเบี้ยประกันชีวิต",
+      "category": "PIT",
+      "rule_type": "fixed_amount",
+      "is_mandatory": false,
+      "description": "Employee claims the premium paid; allowance = min(claimed, amount).",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2017-01-01",
+          "effective_to": null,
+          "params": {
+            "amount": 100000,
+            "per": "year",
+            "input_field": "life_insurance_premium",
+            "input_kind": "claimed_amount",
+            "evidence_required": true
+          },
+          "rounding": "none",
+          "legal_reference": "Revenue Code s.47(1)(d)",
+          "source_url": null,
+          "notes": null
+        }
+      ]
+    },
+    {
+      "code": "PND1_MONTHLY",
+      "name_en": "Monthly salary withholding (PND1)",
+      "name_th": "ภาษีเงินเดือนหัก ณ ที่จ่ายรายเดือน (ภ.ง.ด.1)",
+      "category": "PIT",
+      "rule_type": "formula",
+      "is_mandatory": true,
+      "description": "Estimate annual tax from the current monthly income, subtract tax already withheld this year, spread over the remaining months.",
+      "versions": [
+        {
+          "version": 1,
+          "company_id": null,
+          "status": "approved",
+          "effective_from": "2017-01-01",
+          "effective_to": null,
+          "params": {
+            "expression": "max(0, round((bracket_tax('PIT_BRACKETS', max(0, ytd_income + monthly_income * months_remaining - capped('PIT_EXPENSE', ytd_income + monthly_income * months_remaining) - rule('PIT_ALLOW_PERSONAL', 'amount') - annual_sso - other_allowances)) - ytd_withheld) / months_remaining, 2))",
+            "inputs": [
+              "monthly_income",
+              "months_remaining",
+              "ytd_income",
+              "ytd_withheld",
+              "annual_sso",
+              "other_allowances"
+            ],
+            "output": "monthly_wht"
+          },
+          "rounding": "half_up:0.01",
+          "legal_reference": "Revenue Code s.50(1); Revenue Dept. Order Por. 161/2560 (calculation method)",
+          "source_url": null,
+          "notes": "annual_sso and other_allowances come from the employee tax profile / payroll."
+        }
+      ]
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-VAT-001",
+      "rule": "VAT_STD",
+      "company_id": null,
+      "as_of": "2026-10-10",
+      "description": "Service invoice 200,000 before VAT",
+      "inputs": {
+        "amount": 200000
+      },
+      "expected": {
+        "tax": 14000
+      }
+    },
+    {
+      "id": "TC-VAT-002",
+      "rule": "VAT_STD",
+      "company_id": null,
+      "as_of": "2026-05-01",
+      "description": "Utility bill 4,500 before VAT (version 1 period)",
+      "inputs": {
+        "amount": 4500
+      },
+      "expected": {
+        "tax": 315
+      }
+    },
+    {
+      "id": "TC-VAT-003",
+      "rule": "VAT_ZERO",
+      "company_id": null,
+      "as_of": "2026-10-10",
+      "description": "Export sale",
+      "inputs": {
+        "amount": 500000
+      },
+      "expected": {
+        "tax": 0
+      }
+    },
+    {
+      "id": "TC-WHT-001",
+      "rule": "WHT_PND3_53",
+      "company_id": null,
+      "as_of": "2026-10-05",
+      "description": "Office rent 30,000",
+      "inputs": {
+        "amount": 30000,
+        "category": "rent"
+      },
+      "expected": {
+        "tax": 1500
+      }
+    },
+    {
+      "id": "TC-WHT-002",
+      "rule": "WHT_PND3_53",
+      "company_id": null,
+      "as_of": "2026-10-25",
+      "description": "Service fee 200,000",
+      "inputs": {
+        "amount": 200000,
+        "category": "service"
+      },
+      "expected": {
+        "tax": 6000
+      }
+    },
+    {
+      "id": "TC-WHT-003",
+      "rule": "WHT_PND3_53",
+      "company_id": null,
+      "as_of": "2026-11-01",
+      "description": "Transport 12,345.67",
+      "inputs": {
+        "amount": 12345.67,
+        "category": "transport"
+      },
+      "expected": {
+        "tax": 123.46
+      }
+    },
+    {
+      "id": "TC-WHT-004",
+      "rule": "WHT_MIN_THRESHOLD",
+      "company_id": null,
+      "as_of": "2026-11-01",
+      "description": "Payment of 999 is below threshold",
+      "inputs": {
+        "amount": 999
+      },
+      "expected": {
+        "applies": false
+      }
+    },
+    {
+      "id": "TC-WHT-005",
+      "rule": "WHT_MIN_THRESHOLD",
+      "company_id": null,
+      "as_of": "2026-11-01",
+      "description": "Payment of exactly 1,000 is subject to WHT",
+      "inputs": {
+        "amount": 1000
+      },
+      "expected": {
+        "applies": true
+      }
+    },
+    {
+      "id": "TC-SSO-001",
+      "rule": "SSO",
+      "company_id": null,
+      "as_of": "2025-06-30",
+      "description": "Wage 45,000 under old cap",
+      "inputs": {
+        "base": 45000
+      },
+      "expected": {
+        "amount": 750
+      }
+    },
+    {
+      "id": "TC-SSO-002",
+      "rule": "SSO",
+      "company_id": null,
+      "as_of": "2026-10-31",
+      "description": "Wage 45,000 under 2026 cap",
+      "inputs": {
+        "base": 45000
+      },
+      "expected": {
+        "amount": 875
+      }
+    },
+    {
+      "id": "TC-SSO-003",
+      "rule": "SSO",
+      "company_id": null,
+      "as_of": "2026-10-31",
+      "description": "Wage 10,000 below cap",
+      "inputs": {
+        "base": 10000
+      },
+      "expected": {
+        "amount": 500
+      }
+    },
+    {
+      "id": "TC-SSO-004",
+      "rule": "SSO",
+      "company_id": null,
+      "as_of": "2026-10-31",
+      "description": "Wage 1,000 uses floor 1,650 (82.5 rounds to 83)",
+      "inputs": {
+        "base": 1000
+      },
+      "expected": {
+        "amount": 83
+      }
+    },
+    {
+      "id": "TC-SSO-005",
+      "rule": "SSO",
+      "company_id": null,
+      "as_of": "2032-03-31",
+      "description": "Wage 45,000 under phase-3 cap",
+      "inputs": {
+        "base": 45000
+      },
+      "expected": {
+        "amount": 1150
+      }
+    },
+    {
+      "id": "TC-PIT-001",
+      "rule": "PIT_BRACKETS",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Net taxable 1,000,000",
+      "inputs": {
+        "amount": 1000000
+      },
+      "expected": {
+        "tax": 115000
+      }
+    },
+    {
+      "id": "TC-PIT-002",
+      "rule": "PIT_BRACKETS",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Net taxable 150,000 is tax-free",
+      "inputs": {
+        "amount": 150000
+      },
+      "expected": {
+        "tax": 0
+      }
+    },
+    {
+      "id": "TC-PIT-003",
+      "rule": "PIT_EXPENSE",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Annual salary 960,000: 50% capped at 100,000",
+      "inputs": {
+        "base": 960000
+      },
+      "expected": {
+        "amount": 100000
+      }
+    },
+    {
+      "id": "TC-PIT-004",
+      "rule": "PIT_EXPENSE",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Annual salary 150,000: 50% = 75,000",
+      "inputs": {
+        "base": 150000
+      },
+      "expected": {
+        "amount": 75000
+      }
+    },
+    {
+      "id": "TC-PIT-008",
+      "rule": "PIT_ALLOW_PERSONAL",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Personal allowance always applies",
+      "inputs": {},
+      "expected": {
+        "allowance": 60000
+      }
+    },
+    {
+      "id": "TC-PIT-009",
+      "rule": "PIT_ALLOW_SPOUSE",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Spouse without income",
+      "inputs": {
+        "value": true
+      },
+      "expected": {
+        "allowance": 60000
+      }
+    },
+    {
+      "id": "TC-PIT-010",
+      "rule": "PIT_ALLOW_SPOUSE",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Spouse has own income - no allowance",
+      "inputs": {
+        "value": false
+      },
+      "expected": {
+        "allowance": 0
+      }
+    },
+    {
+      "id": "TC-PIT-005",
+      "rule": "PIT_ALLOW_CHILD",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Two children",
+      "inputs": {
+        "value": 2
+      },
+      "expected": {
+        "allowance": 60000
+      }
+    },
+    {
+      "id": "TC-PIT-006",
+      "rule": "PIT_ALLOW_PARENT",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Five parents claimed, max 4",
+      "inputs": {
+        "value": 5
+      },
+      "expected": {
+        "allowance": 120000
+      }
+    },
+    {
+      "id": "TC-PIT-007",
+      "rule": "PIT_ALLOW_LIFE_INS",
+      "company_id": null,
+      "as_of": "2026-12-31",
+      "description": "Premium 150,000 capped at 100,000",
+      "inputs": {
+        "value": 150000
+      },
+      "expected": {
+        "allowance": 100000
+      }
+    },
+    {
+      "id": "TC-PND1-001",
+      "rule": "PND1_MONTHLY",
+      "company_id": null,
+      "as_of": "2026-01-31",
+      "description": "Salary 80,000 from January, SSO 10,500/yr, no other allowances",
+      "inputs": {
+        "monthly_income": 80000,
+        "months_remaining": 12,
+        "ytd_income": 0,
+        "ytd_withheld": 0,
+        "annual_sso": 10500,
+        "other_allowances": 0
+      },
+      "expected": {
+        "monthly_wht": 6075
+      }
+    },
+    {
+      "id": "TC-PND1-002",
+      "rule": "PND1_MONTHLY",
+      "company_id": null,
+      "as_of": "2026-01-31",
+      "description": "Salary 45,000 from January",
+      "inputs": {
+        "monthly_income": 45000,
+        "months_remaining": 12,
+        "ytd_income": 0,
+        "ytd_withheld": 0,
+        "annual_sso": 10500,
+        "other_allowances": 0
+      },
+      "expected": {
+        "monthly_wht": 1204.17
+      }
+    },
+    {
+      "id": "TC-PND1-003",
+      "rule": "PND1_MONTHLY",
+      "company_id": null,
+      "as_of": "2026-01-31",
+      "description": "Salary 18,000: below taxable level",
+      "inputs": {
+        "monthly_income": 18000,
+        "months_remaining": 12,
+        "ytd_income": 0,
+        "ytd_withheld": 0,
+        "annual_sso": 10500,
+        "other_allowances": 0
+      },
+      "expected": {
+        "monthly_wht": 0
+      }
+    },
+    {
+      "id": "TC-PND1-004",
+      "rule": "PND1_MONTHLY",
+      "company_id": null,
+      "as_of": "2026-11-30",
+      "description": "Salary 55,000, November: 10 months paid, 22,166.70 already withheld",
+      "inputs": {
+        "monthly_income": 55000,
+        "months_remaining": 2,
+        "ytd_income": 550000,
+        "ytd_withheld": 22166.7,
+        "annual_sso": 10500,
+        "other_allowances": 0
+      },
+      "expected": {
+        "monthly_wht": 2141.65
+      }
+    },
+    {
+      "id": "TC-PND1-005",
+      "rule": "PND1_MONTHLY",
+      "company_id": null,
+      "as_of": "2026-01-31",
+      "description": "Salary 80,000 with spouse + 2 children (120,000 allowances)",
+      "inputs": {
+        "monthly_income": 80000,
+        "months_remaining": 12,
+        "ytd_income": 0,
+        "ytd_withheld": 0,
+        "annual_sso": 10500,
+        "other_allowances": 120000
+      },
+      "expected": {
+        "monthly_wht": 4410.42
+      }
+    }
+  ]
+}
