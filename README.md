@@ -3,7 +3,7 @@
 Accounting, invoices, payroll and **user-revisable tax rules** on your own PostgreSQL database.
 Same look and themes as [sUML](https://github.com/warisr040/sUML) and [sTrack](https://github.com/warisr040/sGantt).
 
-**[⬇ Download sERP](https://github.com/warisr040/sERP/archive/refs/heads/main.zip)** (always the latest; unzip, open `sERP-main`, double-click `sERP.bat`) · **[Quick guide](web/guide/index.html)** (also inside the app: Help → Open the quick guide)
+**[⬇ Download sERP](https://github.com/warisr040/sERP/archive/refs/heads/main.zip)** (always the latest; unzip, open `sERP-main`, double-click `sERP.bat`) · **[Quick guide](https://github.com/warisr040/sERP/raw/main/sERP-Quick-Guide.html)** — one HTML file with screenshots: download and double-click to open (also inside the app: Help → Open the quick guide)
 
 ![sERP dashboard](web/guide/img/dashboard.jpg)
 
@@ -39,6 +39,7 @@ Five themes: Basic, Dark, Starry Night, Forest, Burning. Shortcuts: <kbd>Alt</kb
 | `serp_server.py` | Application server and JSON API (Python standard library + psycopg) |
 | `web/` | The app: `index.html` (single file, no external dependencies) + logo |
 | `engine/` | Tax rule engine (`taxrules.py`), database tool (`taxdb.py`), SQL (`01_core.sql`, `02_tax_rules.sql`), the sample dump `erp_sample_v2.sql`, the rule file definition, and `build_sample.py` / `verify.py` |
+| `sERP-Quick-Guide.html` | Step-by-step guide in one file (Forest theme by default) |
 | `docs/` | Tax rule requirements and design decisions |
 | `tests/test_api.py` | 22 API checks: VAT, withholding, closed periods, balancing, roles, import checks, request protection |
 | `logo/` | SVG, PNG 16–512 px and `serp.ico` |
