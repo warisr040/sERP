@@ -3,7 +3,7 @@
 Accounting, invoices, payroll and **user-revisable tax rules** on your own PostgreSQL database.
 Same look and themes as [sUML](https://github.com/warisr040/sUML) and [sTrack](https://github.com/warisr040/sGantt).
 
-**[⬇ Download sERP.zip](https://github.com/warisr040/sERP/releases/latest/download/sERP.zip)** (latest release) · **[Quick guide](web/guide/index.html)** (also inside the app: Help → Open the quick guide)
+**[⬇ Download sERP](https://github.com/warisr040/sERP/archive/refs/heads/main.zip)** (always the latest; unzip, open `sERP-main`, double-click `sERP.bat`) · **[Quick guide](web/guide/index.html)** (also inside the app: Help → Open the quick guide)
 
 ![sERP dashboard](web/guide/img/dashboard.jpg)
 

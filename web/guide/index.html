@@ -152,7 +152,7 @@ tr:last-child td{border-bottom:0}
   <p class="lead">You only install PostgreSQL yourself — <code>sERP.bat</code> takes care of Python. Or use Docker for both.</p>
   <div class="tbl"><table>
     <tr><th>What</th><th>Where to get it</th><th>Note</th></tr>
-    <tr><td><b>sERP.zip</b></td><td><a href="https://github.com/warisr040/sERP/releases/latest/download/sERP.zip">Download from GitHub</a> · <a href="https://github.com/warisr040/sERP">source</a></td><td>Always the latest version. Unzip into any folder, for example inside your project folder</td></tr>
+    <tr><td><b>sERP (zip)</b></td><td><a href="https://github.com/warisr040/sERP/archive/refs/heads/main.zip">Download from GitHub</a> · <a href="https://github.com/warisr040/sERP">source</a></td><td>Always the latest version. Unzip into any folder; the app is in <code>sERP-main</code></td></tr>
     <tr><td><b>Python 3.10 or newer</b> <span class="chip ok">automatic</span></td><td>Nothing to do</td><td><code>sERP.bat</code> finds Python by itself, or installs Python 3.12 for your user with <code>winget</code>. No "Add to PATH" needed. Manual install: <a href="https://www.python.org/downloads/">python.org</a></td></tr>
     <tr><td><b>PostgreSQL 16 or newer</b></td><td><a href="https://www.postgresql.org/download/windows/">postgresql.org/download/windows</a></td><td>Step by step in <a href="#pg">section 2</a>. Microsoft SQL Server does <b>not</b> replace it</td></tr>
     <tr><td><b>Docker Desktop</b> <span class="chip mid">alternative</span></td><td><a href="https://www.docker.com/products/docker-desktop/">docker.com</a></td><td>Runs PostgreSQL and sERP together — no Python or PostgreSQL install needed</td></tr>
@@ -204,7 +204,7 @@ tr:last-child td{border-bottom:0}
   <p class="lead">The first start takes about a minute. After that, sERP opens in a few seconds.</p>
   <div class="split">
     <ol class="steps">
-      <li><a href="https://github.com/warisr040/sERP/releases/latest/download/sERP.zip">Download <b>sERP.zip</b></a> from GitHub and unzip it.</li>
+      <li><a href="https://github.com/warisr040/sERP/archive/refs/heads/main.zip">Download sERP</a> from GitHub (<b>sERP-main.zip</b>) and unzip it. Open the <b>sERP-main</b> folder.</li>
       <li>Double-click <b>sERP.bat</b>. A black window appears and prepares sERP — <b>only the first time</b>. If Python is missing it installs it for you (allow it if Windows asks).</li>
       <li>The sERP window opens with <b>Welcome to sERP</b>.</li>
       <li>Fill in the database: Host <code>localhost</code>, Port <code>5432</code>, Database <code>serp</code>, User <code>postgres</code>, and your password.</li>
